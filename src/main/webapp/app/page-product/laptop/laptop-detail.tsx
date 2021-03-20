@@ -7,7 +7,99 @@ import {BreadcrumbsItem} from 'react-breadcrumbs-dynamic';
 import {ProductViews} from 'app/page-product/product-history-view/product-view'
 import HistoryView from "app/page-product/product-history-view/history-view";
 import {Link, withRouter} from 'react-router-dom';
+import {AvField, AvForm, AvGroup, AvInput} from 'availity-reactstrap-validation';
+import {Button, Label} from 'reactstrap'
 
+export  const Comment=()=>{
+  const [comment, setComment]=useState('')
+  const [dataComment, setDataComment]=useState([])
+  const commentModal=document.getElementById('comment-modal')
+  const onChangeComment=(event)=>{
+    setComment(event.target.value)
+  }
+  useEffect(()=>{
+    axios({
+      method:'get',
+      url:'http://localhost:4001/comments'
+    })
+      .then(res=>setDataComment(res.data))
+  },[comment])
+
+  const onOpenModalComment=()=>{
+    if(comment.length>=3) return commentModal.style.display='block';
+    else alert('Bạn phải nhập tối đa 3 ký tự')
+  }
+  const onCloseModalComment=()=>{
+    commentModal.style.display='none'
+  }
+  const onSubComment=()=>{
+    const realTime = new Date()
+    axios({
+      method:'post',
+      url:'http://localhost:4001/comments',
+      data: {comment, time: realTime}
+    })
+      .then(res=>{
+        if(res.statusText==="Created"){
+          onCloseModalComment();
+          setComment('')
+        }
+      })
+
+  }
+  window.console.log(comment.length)
+  return(
+    <div className="d-flex justify-content-center mt-5">
+      <div className="col-9">
+        <AvForm onSubmit={onSubComment} autoComplete='off'>
+          <AvGroup>
+            <AvField type='textarea' name='comment' minLength={3} maxLength={200} value={comment}onChange={(event)=>onChangeComment(event)}placeholder="Nhận xét không dài quá 200 ký tự"/>
+          </AvGroup>
+          <Button type="button" className="btn-danger text-white" onClick={onOpenModalComment}>Gửi nhận xét</Button>
+
+          <div id="comment-modal" className="comment-modal-box">
+            <div className="comment-modal-content d-flex justify-content-center">
+              <div className=" modal-content col-6">
+                <div className="d-flex justify-content-between">
+                  <span><h3>Hoàn thành gửi nhận xét</h3></span>
+                  <span className="close-modal d-flex justify-content-end" onClick={onCloseModalComment}><h3>&times;</h3></span>
+                </div>
+                <AvGroup>
+                  <Label>Tên<span>(bắt buộc)</span>:</Label>
+                  <AvInput type="text" name='name-comment-ber' required />
+                </AvGroup>
+                <span>Để nhận thông báo khi có trả lời. Hãy nhập email và số điện thoại (Không bắt buộc)</span>
+                <AvGroup>
+                  <Label>
+                    Email:
+                  </Label>
+                  <AvInput type="mail" name='email-comment-ber'/>
+                </AvGroup>
+                <AvGroup>
+                  <Label>
+                    Số điện thoại:
+                  </Label>
+                  <AvInput type="text" name='phone-comment-ber'/>
+                </AvGroup>
+                <Button type="submit" className="btn-danger text-white">Gửi nhận xét</Button>
+              </div>
+            </div>
+          </div>
+        </AvForm>
+        <div>
+          {dataComment?dataComment.map(item=>{
+            return(
+              <div key={item.id} className="d-flex comment mt-3">
+                <div className="avatar-commentber text-white">avatar</div>
+                <div className="comment-content ml-2">{item.comment}</div>
+              </div>
+            )}
+          ):(<div>không có comment nào</div>)}
+        </div>
+      </div>
+    </div>
+  )
+}
 export const LaptopDetail = props =>
 {
   const [laptop, setLaptop] = useState(null);
@@ -246,8 +338,8 @@ export const LaptopDetail = props =>
         </div>
       </div>
       {/*<div className="product-detail-content">/!*<ProductDetailContent/>*!/</div>*/}
-      <Link to='/page/lap-top/1102'>intro</Link>
       <HistoryView/>
+      <Comment/>
     </div>
   );
 };
