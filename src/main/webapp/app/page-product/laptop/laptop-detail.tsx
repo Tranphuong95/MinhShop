@@ -9,13 +9,20 @@ import HistoryView from "app/page-product/product-history-view/history-view";
 import {Link, withRouter} from 'react-router-dom';
 import {AvField, AvForm, AvGroup, AvInput} from 'availity-reactstrap-validation';
 import {Button, Label} from 'reactstrap'
+import tablet from "app/page-product/may-tinh-bang/tablet";
 
 export  const Comment=()=>{
-  const [comment, setComment]=useState('')
+  const [comment, setComment]:any=useState({
+    comment:'',
+    name:'',
+    email:'',
+    phoneNumber:''
+
+  })
   const [dataComment, setDataComment]=useState([])
   const commentModal=document.getElementById('comment-modal')
   const onChangeComment=(event)=>{
-    setComment(event.target.value)
+    setComment({...comment, [event.target.name]: event.target.value})
   }
   useEffect(()=>{
     axios({
@@ -26,7 +33,8 @@ export  const Comment=()=>{
   },[comment])
 
   const onOpenModalComment=()=>{
-    if(comment.length>=3) return commentModal.style.display='block';
+    window.console.log(comment)
+    if(comment.comment.length>=3) return commentModal.style.display='block';
     else alert('Bạn phải nhập tối đa 3 ký tự')
   }
   const onCloseModalComment=()=>{
@@ -42,18 +50,19 @@ export  const Comment=()=>{
       .then(res=>{
         if(res.statusText==="Created"){
           onCloseModalComment();
-          setComment('')
+          setComment({comment:'', name:'', email:'', phoneNumber:''})
         }
       })
 
   }
-  window.console.log(comment.length)
+  window.console.log(comment.comment.length)
   return(
     <div className="d-flex justify-content-center mt-5">
       <div className="col-9">
+        <h2 className="text-dark"><strong>Nhận xét ({dataComment?dataComment.length:0})</strong></h2>
         <AvForm onSubmit={onSubComment} autoComplete='off'>
           <AvGroup>
-            <AvField type='textarea' name='comment' minLength={3} maxLength={200} value={comment}onChange={(event)=>onChangeComment(event)}placeholder="Nhận xét không dài quá 200 ký tự"/>
+            <AvField type='textarea' name='comment' minLength={3} maxLength={200} value={comment.comment} onChange={onChangeComment}placeholder="Nhận xét không dài quá 200 ký tự"/>
           </AvGroup>
           <Button type="button" className="btn-danger text-white" onClick={onOpenModalComment}>Gửi nhận xét</Button>
 
@@ -66,20 +75,20 @@ export  const Comment=()=>{
                 </div>
                 <AvGroup>
                   <Label>Tên<span>(bắt buộc)</span>:</Label>
-                  <AvInput type="text" name='name-comment-ber' required />
+                  <AvInput type="text" name='name' value={comment.name} onChange={onChangeComment} required />
                 </AvGroup>
                 <span>Để nhận thông báo khi có trả lời. Hãy nhập email và số điện thoại (Không bắt buộc)</span>
                 <AvGroup>
                   <Label>
                     Email:
                   </Label>
-                  <AvInput type="mail" name='email-comment-ber'/>
+                  <AvInput type="mail" name='email' value={comment.email} onChange={onChangeComment}/>
                 </AvGroup>
                 <AvGroup>
                   <Label>
                     Số điện thoại:
                   </Label>
-                  <AvInput type="text" name='phone-comment-ber'/>
+                  <AvInput type="text" name='phoneNumber' value={comment.phoneNumber} onChange={onChangeComment}/>
                 </AvGroup>
                 <Button type="submit" className="btn-danger text-white">Gửi nhận xét</Button>
               </div>
@@ -88,10 +97,17 @@ export  const Comment=()=>{
         </AvForm>
         <div>
           {dataComment?dataComment.map(item=>{
+            const times=new Date(item.time)
             return(
               <div key={item.id} className="d-flex comment mt-3">
                 <div className="avatar-commentber text-white">avatar</div>
-                <div className="comment-content ml-2">{item.comment}</div>
+                <div className="comment-content ml-2">
+                  <div className="d-flex">
+                    <div className="mr-3"><strong>{item.comment.name}</strong></div>
+                    <div className="text-secondary">{`${times.toLocaleTimeString()} ${times.toLocaleDateString()}`}</div>
+                  </div>
+                  <div>{item.comment.comment}</div>
+                </div>
               </div>
             )}
           ):(<div>không có comment nào</div>)}
