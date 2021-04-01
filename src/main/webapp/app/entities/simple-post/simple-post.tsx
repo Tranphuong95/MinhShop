@@ -213,7 +213,7 @@ export const SimplePost = (props: ISimplePostProps) =>
       postDetails.map(item=>{
         if(item.id===id){
           if(item.otherData){
-            const urls:any=item.otherData;
+            const urls:any= item.otherData;
             const images=JSON.parse(urls);
             if(images && images.length>0){
               result=images.map(image=>{
