@@ -58,3 +58,4 @@ processResources {
 
 processResources.dependsOn webapp
 bootJar.dependsOn processResources
+webapp.dependsOn buildOpenApiFrontend

@@ -28,14 +28,16 @@ public class FileDTO implements Serializable
   private UUID uuid;
 
   /**
-   * fileData is data of video in binary form
+   * pathFileOriginal path of File (original)
    */
+  @ApiModelProperty(value = "pathFileOriginal path of File (original)")
+  private String pathFileOriginal;
 
-  @ApiModelProperty(value = "fileData is data of video in binary form", required = true)
-  @Lob
-  private byte[] fileData;
-
-  private String fileDataContentType;
+  /**
+   * pathFileProcessed path of File (processed)
+   */
+  @ApiModelProperty(value = "pathFileProcessed path of File (processed)")
+  private String pathFileProcessed;
 
   /**
    * name of file (Default is uuid + extension)
@@ -59,6 +61,13 @@ public class FileDTO implements Serializable
   private String typeFile;
 
   /**
+   * file processed set value to true (default false)
+   */
+  @NotNull
+  @ApiModelProperty(value = "file processed set value to true (default false)", required = true)
+  private Boolean processed;
+
+  /**
    * searchField
    */
   @ApiModelProperty(value = "searchField")
@@ -68,6 +77,7 @@ public class FileDTO implements Serializable
   /**
    * role
    */
+  @Size(max = 2048)
   @ApiModelProperty(value = "role")
   private String role;
 
@@ -128,24 +138,24 @@ public class FileDTO implements Serializable
     this.uuid = uuid;
   }
 
-  public byte[] getFileData()
+  public String getPathFileOriginal()
   {
-    return fileData;
+    return pathFileOriginal;
   }
 
-  public void setFileData(byte[] fileData)
+  public void setPathFileOriginal(String pathFileOriginal)
   {
-    this.fileData = fileData;
+    this.pathFileOriginal = pathFileOriginal;
   }
 
-  public String getFileDataContentType()
+  public String getPathFileProcessed()
   {
-    return fileDataContentType;
+    return pathFileProcessed;
   }
 
-  public void setFileDataContentType(String fileDataContentType)
+  public void setPathFileProcessed(String pathFileProcessed)
   {
-    this.fileDataContentType = fileDataContentType;
+    this.pathFileProcessed = pathFileProcessed;
   }
 
   public String getNameFile()
@@ -176,6 +186,16 @@ public class FileDTO implements Serializable
   public void setTypeFile(String typeFile)
   {
     this.typeFile = typeFile;
+  }
+
+  public Boolean getProcessed()
+  {
+    return processed;
+  }
+
+  public void setProcessed(Boolean processed)
+  {
+    this.processed = processed;
   }
 
   public String getSearchField()
@@ -291,10 +311,12 @@ public class FileDTO implements Serializable
     return "FileDTO{" +
       "id=" + getId() +
       ", uuid='" + getUuid() + "'" +
-      ", fileData='" + getFileData() + "'" +
+      ", pathFileOriginal='" + getPathFileOriginal() + "'" +
+      ", pathFileProcessed='" + getPathFileProcessed() + "'" +
       ", nameFile='" + getNameFile() + "'" +
       ", extension='" + getExtension() + "'" +
       ", typeFile='" + getTypeFile() + "'" +
+      ", processed='" + getProcessed() + "'" +
       ", searchField='" + getSearchField() + "'" +
       ", role='" + getRole() + "'" +
       ", createdDate='" + getCreatedDate() + "'" +

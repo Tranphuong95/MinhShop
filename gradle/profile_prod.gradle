@@ -48,3 +48,4 @@ processResources {
 test.dependsOn webapp_test
 processResources.dependsOn webapp
 bootJar.dependsOn processResources
+webapp.dependsOn buildOpenApiFrontend

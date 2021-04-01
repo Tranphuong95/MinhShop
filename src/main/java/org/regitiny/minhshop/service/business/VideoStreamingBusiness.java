@@ -31,7 +31,7 @@ public class VideoStreamingBusiness
   {
     return fileService.getFileByFileName(videoName)
       .map(file -> Tuple.of(
-        (Resource) new InMemoryResource(file.getFileData()),
+        (Resource) new InMemoryResource(new byte[1]),
         file.getTypeFile()
       ))
       .orElseThrow(() ->

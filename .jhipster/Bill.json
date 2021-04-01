@@ -53,19 +53,11 @@
     {
       "fieldName": "product",
       "fieldType": "String",
+      "javadoc": "product",
       "fieldValidateRules": [
         "maxlength"
       ],
-      "fieldValidateRulesMaxlength": "10000"
-    },
-    {
-      "fieldName": "comment",
-      "fieldType": "String",
-      "javadoc": "comment",
-      "fieldValidateRules": [
-        "maxlength"
-      ],
-      "fieldValidateRulesMaxlength": "2048"
+      "fieldValidateRulesMaxlength": "16383"
     },
     {
       "fieldName": "searchField",
@@ -76,7 +68,11 @@
     {
       "fieldName": "role",
       "fieldType": "String",
-      "javadoc": "role"
+      "javadoc": "role",
+      "fieldValidateRules": [
+        "maxlength"
+      ],
+      "fieldValidateRulesMaxlength": "2048"
     },
     {
       "fieldName": "createdDate",
@@ -102,6 +98,15 @@
       "fieldName": "dataSize",
       "fieldType": "Long",
       "javadoc": "dataSize"
+    },
+    {
+      "fieldName": "comment",
+      "fieldType": "String",
+      "javadoc": "comment",
+      "fieldValidateRules": [
+        "maxlength"
+      ],
+      "fieldValidateRulesMaxlength": "2048"
     }
   ],
   "relationships": [

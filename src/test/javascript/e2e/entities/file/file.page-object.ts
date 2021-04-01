@@ -7,7 +7,6 @@ import NavBarPage from './../../page-objects/navbar-page';
 import FileUpdatePage from './file-update.page-object';
 
 const expect = chai.expect;
-
 export class FileDeleteDialog
 {
   deleteModal = element(by.className('modal'));

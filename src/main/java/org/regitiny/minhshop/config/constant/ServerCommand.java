@@ -18,7 +18,7 @@ public class ServerCommand
   private static final String FILE_NAME_OUTPUT = "${fileNameOutput}";
   private static final String CUSTOM_OPTION = "${customOption}";
   @Getter
-  public static String FOLDER_OUTPUT;
+  private static String FOLDER_OUTPUT;
   @Getter
   private static String FOLDER_INPUT;
 

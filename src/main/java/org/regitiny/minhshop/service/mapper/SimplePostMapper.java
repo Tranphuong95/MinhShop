@@ -2,13 +2,14 @@ package org.regitiny.minhshop.service.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.ReportingPolicy;
 import org.regitiny.minhshop.domain.SimplePost;
 import org.regitiny.minhshop.service.dto.SimplePostDTO;
 
 /**
  * Mapper for the entity {@link SimplePost} and its DTO {@link SimplePostDTO}.
  */
-@Mapper(componentModel = "spring", uses = {PostDetailsMapper.class, TypePostMapper.class, TypePostFilterMapper.class})
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = "spring", uses = {PostDetailsMapper.class, TypePostMapper.class, TypePostFilterMapper.class})
 public interface SimplePostMapper extends EntityMapper<SimplePostDTO, SimplePost>
 {
   @Mapping(target = "postDetails", source = "postDetails", qualifiedByName = "postDetailsId")

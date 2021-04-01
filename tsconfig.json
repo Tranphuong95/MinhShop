@@ -27,6 +27,9 @@
     "paths": {
       "app/*": [
         "src/main/webapp/app/*"
+      ],
+      "open-api/*": [
+        "build/openapi/src/main/typescript/open-api/*"
       ]
     },
     "importHelpers": true,
@@ -35,7 +38,8 @@
   },
   "include": [
     "src/main/webapp/app",
-    "src/test/javascript/spec"
+    "src/test/javascript/spec",
+    "build/openapi/src/main/typescript/open-api"
   ],
   "exclude": [
     "node_modules"

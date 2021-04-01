@@ -18,14 +18,15 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Base64Utils;
 
 import javax.persistence.EntityManager;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicLong;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
@@ -47,10 +48,11 @@ class FileResourceIT
   private static final UUID DEFAULT_UUID = UUID.randomUUID();
   private static final UUID UPDATED_UUID = UUID.randomUUID();
 
-  private static final byte[] DEFAULT_FILE_DATA = TestUtil.createByteArray(1, "0");
-  private static final byte[] UPDATED_FILE_DATA = TestUtil.createByteArray(1, "1");
-  private static final String DEFAULT_FILE_DATA_CONTENT_TYPE = "image/jpg";
-  private static final String UPDATED_FILE_DATA_CONTENT_TYPE = "image/png";
+  private static final String DEFAULT_PATH_FILE_ORIGINAL = "AAAAAAAAAA";
+  private static final String UPDATED_PATH_FILE_ORIGINAL = "BBBBBBBBBB";
+
+  private static final String DEFAULT_PATH_FILE_PROCESSED = "AAAAAAAAAA";
+  private static final String UPDATED_PATH_FILE_PROCESSED = "BBBBBBBBBB";
 
   private static final String DEFAULT_NAME_FILE = "AAAAAAAAAA";
   private static final String UPDATED_NAME_FILE = "BBBBBBBBBB";
@@ -60,6 +62,9 @@ class FileResourceIT
 
   private static final String DEFAULT_TYPE_FILE = "AAAAAAAAAA";
   private static final String UPDATED_TYPE_FILE = "BBBBBBBBBB";
+
+  private static final Boolean DEFAULT_PROCESSED = false;
+  private static final Boolean UPDATED_PROCESSED = true;
 
   private static final String DEFAULT_SEARCH_FIELD = "AAAAAAAAAA";
   private static final String UPDATED_SEARCH_FIELD = "BBBBBBBBBB";
@@ -84,6 +89,13 @@ class FileResourceIT
 
   private static final String DEFAULT_COMMENT = "AAAAAAAAAA";
   private static final String UPDATED_COMMENT = "BBBBBBBBBB";
+
+  private static final String ENTITY_API_URL = "/api/files";
+  private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
+  private static final String ENTITY_SEARCH_API_URL = "/api/_search/files";
+
+  private static final Random random = new Random();
+  private static final AtomicLong count = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
 
   @Autowired
   private FileRepository fileRepository;
@@ -117,11 +129,12 @@ class FileResourceIT
   {
     File file = new File()
       .uuid(DEFAULT_UUID)
-      .fileData(DEFAULT_FILE_DATA)
-      .fileDataContentType(DEFAULT_FILE_DATA_CONTENT_TYPE)
+      .pathFileOriginal(DEFAULT_PATH_FILE_ORIGINAL)
+      .pathFileProcessed(DEFAULT_PATH_FILE_PROCESSED)
       .nameFile(DEFAULT_NAME_FILE)
       .extension(DEFAULT_EXTENSION)
       .typeFile(DEFAULT_TYPE_FILE)
+      .processed(DEFAULT_PROCESSED)
       .searchField(DEFAULT_SEARCH_FIELD)
       .role(DEFAULT_ROLE)
       .createdDate(DEFAULT_CREATED_DATE)
@@ -143,11 +156,12 @@ class FileResourceIT
   {
     File file = new File()
       .uuid(UPDATED_UUID)
-      .fileData(UPDATED_FILE_DATA)
-      .fileDataContentType(UPDATED_FILE_DATA_CONTENT_TYPE)
+      .pathFileOriginal(UPDATED_PATH_FILE_ORIGINAL)
+      .pathFileProcessed(UPDATED_PATH_FILE_PROCESSED)
       .nameFile(UPDATED_NAME_FILE)
       .extension(UPDATED_EXTENSION)
       .typeFile(UPDATED_TYPE_FILE)
+      .processed(UPDATED_PROCESSED)
       .searchField(UPDATED_SEARCH_FIELD)
       .role(UPDATED_ROLE)
       .createdDate(UPDATED_CREATED_DATE)
@@ -173,7 +187,7 @@ class FileResourceIT
     // Create the File
     FileDTO fileDTO = fileMapper.toDto(file);
     restFileMockMvc
-      .perform(post("/api/files").contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(fileDTO)))
+      .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(fileDTO)))
       .andExpect(status().isCreated());
 
     // Validate the File in the database
@@ -181,11 +195,12 @@ class FileResourceIT
     assertThat(fileList).hasSize(databaseSizeBeforeCreate + 1);
     File testFile = fileList.get(fileList.size() - 1);
     assertThat(testFile.getUuid()).isEqualTo(DEFAULT_UUID);
-    assertThat(testFile.getFileData()).isEqualTo(DEFAULT_FILE_DATA);
-    assertThat(testFile.getFileDataContentType()).isEqualTo(DEFAULT_FILE_DATA_CONTENT_TYPE);
+    assertThat(testFile.getPathFileOriginal()).isEqualTo(DEFAULT_PATH_FILE_ORIGINAL);
+    assertThat(testFile.getPathFileProcessed()).isEqualTo(DEFAULT_PATH_FILE_PROCESSED);
     assertThat(testFile.getNameFile()).isEqualTo(DEFAULT_NAME_FILE);
     assertThat(testFile.getExtension()).isEqualTo(DEFAULT_EXTENSION);
     assertThat(testFile.getTypeFile()).isEqualTo(DEFAULT_TYPE_FILE);
+    assertThat(testFile.getProcessed()).isEqualTo(DEFAULT_PROCESSED);
     assertThat(testFile.getSearchField()).isEqualTo(DEFAULT_SEARCH_FIELD);
     assertThat(testFile.getRole()).isEqualTo(DEFAULT_ROLE);
     assertThat(testFile.getCreatedDate()).isEqualTo(DEFAULT_CREATED_DATE);
@@ -211,7 +226,7 @@ class FileResourceIT
 
     // An entity with an existing ID cannot be created, so this API call must fail
     restFileMockMvc
-      .perform(post("/api/files").contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(fileDTO)))
+      .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(fileDTO)))
       .andExpect(status().isBadRequest());
 
     // Validate the File in the database
@@ -234,7 +249,26 @@ class FileResourceIT
     FileDTO fileDTO = fileMapper.toDto(file);
 
     restFileMockMvc
-      .perform(post("/api/files").contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(fileDTO)))
+      .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(fileDTO)))
+      .andExpect(status().isBadRequest());
+
+    List<File> fileList = fileRepository.findAll();
+    assertThat(fileList).hasSize(databaseSizeBeforeTest);
+  }
+
+  @Test
+  @Transactional
+  void checkProcessedIsRequired() throws Exception
+  {
+    int databaseSizeBeforeTest = fileRepository.findAll().size();
+    // set the field null
+    file.setProcessed(null);
+
+    // Create the File, which fails.
+    FileDTO fileDTO = fileMapper.toDto(file);
+
+    restFileMockMvc
+      .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(fileDTO)))
       .andExpect(status().isBadRequest());
 
     List<File> fileList = fileRepository.findAll();
@@ -250,16 +284,17 @@ class FileResourceIT
 
     // Get all the fileList
     restFileMockMvc
-      .perform(get("/api/files?sort=id,desc"))
+      .perform(get(ENTITY_API_URL + "?sort=id,desc"))
       .andExpect(status().isOk())
       .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
       .andExpect(jsonPath("$.[*].id").value(hasItem(file.getId().intValue())))
       .andExpect(jsonPath("$.[*].uuid").value(hasItem(DEFAULT_UUID.toString())))
-      .andExpect(jsonPath("$.[*].fileDataContentType").value(hasItem(DEFAULT_FILE_DATA_CONTENT_TYPE)))
-      .andExpect(jsonPath("$.[*].fileData").value(hasItem(Base64Utils.encodeToString(DEFAULT_FILE_DATA))))
+      .andExpect(jsonPath("$.[*].pathFileOriginal").value(hasItem(DEFAULT_PATH_FILE_ORIGINAL)))
+      .andExpect(jsonPath("$.[*].pathFileProcessed").value(hasItem(DEFAULT_PATH_FILE_PROCESSED)))
       .andExpect(jsonPath("$.[*].nameFile").value(hasItem(DEFAULT_NAME_FILE)))
       .andExpect(jsonPath("$.[*].extension").value(hasItem(DEFAULT_EXTENSION)))
       .andExpect(jsonPath("$.[*].typeFile").value(hasItem(DEFAULT_TYPE_FILE)))
+      .andExpect(jsonPath("$.[*].processed").value(hasItem(DEFAULT_PROCESSED.booleanValue())))
       .andExpect(jsonPath("$.[*].searchField").value(hasItem(DEFAULT_SEARCH_FIELD)))
       .andExpect(jsonPath("$.[*].role").value(hasItem(DEFAULT_ROLE)))
       .andExpect(jsonPath("$.[*].createdDate").value(hasItem(DEFAULT_CREATED_DATE.toString())))
@@ -279,16 +314,17 @@ class FileResourceIT
 
     // Get the file
     restFileMockMvc
-      .perform(get("/api/files/{id}", file.getId()))
+      .perform(get(ENTITY_API_URL_ID, file.getId()))
       .andExpect(status().isOk())
       .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
       .andExpect(jsonPath("$.id").value(file.getId().intValue()))
       .andExpect(jsonPath("$.uuid").value(DEFAULT_UUID.toString()))
-      .andExpect(jsonPath("$.fileDataContentType").value(DEFAULT_FILE_DATA_CONTENT_TYPE))
-      .andExpect(jsonPath("$.fileData").value(Base64Utils.encodeToString(DEFAULT_FILE_DATA)))
+      .andExpect(jsonPath("$.pathFileOriginal").value(DEFAULT_PATH_FILE_ORIGINAL))
+      .andExpect(jsonPath("$.pathFileProcessed").value(DEFAULT_PATH_FILE_PROCESSED))
       .andExpect(jsonPath("$.nameFile").value(DEFAULT_NAME_FILE))
       .andExpect(jsonPath("$.extension").value(DEFAULT_EXTENSION))
       .andExpect(jsonPath("$.typeFile").value(DEFAULT_TYPE_FILE))
+      .andExpect(jsonPath("$.processed").value(DEFAULT_PROCESSED.booleanValue()))
       .andExpect(jsonPath("$.searchField").value(DEFAULT_SEARCH_FIELD))
       .andExpect(jsonPath("$.role").value(DEFAULT_ROLE))
       .andExpect(jsonPath("$.createdDate").value(DEFAULT_CREATED_DATE.toString()))
@@ -304,12 +340,12 @@ class FileResourceIT
   void getNonExistingFile() throws Exception
   {
     // Get the file
-    restFileMockMvc.perform(get("/api/files/{id}", Long.MAX_VALUE)).andExpect(status().isNotFound());
+    restFileMockMvc.perform(get(ENTITY_API_URL_ID, Long.MAX_VALUE)).andExpect(status().isNotFound());
   }
 
   @Test
   @Transactional
-  void updateFile() throws Exception
+  void putNewFile() throws Exception
   {
     // Initialize the database
     fileRepository.saveAndFlush(file);
@@ -322,11 +358,12 @@ class FileResourceIT
     em.detach(updatedFile);
     updatedFile
       .uuid(UPDATED_UUID)
-      .fileData(UPDATED_FILE_DATA)
-      .fileDataContentType(UPDATED_FILE_DATA_CONTENT_TYPE)
+      .pathFileOriginal(UPDATED_PATH_FILE_ORIGINAL)
+      .pathFileProcessed(UPDATED_PATH_FILE_PROCESSED)
       .nameFile(UPDATED_NAME_FILE)
       .extension(UPDATED_EXTENSION)
       .typeFile(UPDATED_TYPE_FILE)
+      .processed(UPDATED_PROCESSED)
       .searchField(UPDATED_SEARCH_FIELD)
       .role(UPDATED_ROLE)
       .createdDate(UPDATED_CREATED_DATE)
@@ -338,7 +375,11 @@ class FileResourceIT
     FileDTO fileDTO = fileMapper.toDto(updatedFile);
 
     restFileMockMvc
-      .perform(put("/api/files").contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(fileDTO)))
+      .perform(
+        put(ENTITY_API_URL_ID, fileDTO.getId())
+          .contentType(MediaType.APPLICATION_JSON)
+          .content(TestUtil.convertObjectToJsonBytes(fileDTO))
+      )
       .andExpect(status().isOk());
 
     // Validate the File in the database
@@ -346,11 +387,12 @@ class FileResourceIT
     assertThat(fileList).hasSize(databaseSizeBeforeUpdate);
     File testFile = fileList.get(fileList.size() - 1);
     assertThat(testFile.getUuid()).isEqualTo(UPDATED_UUID);
-    assertThat(testFile.getFileData()).isEqualTo(UPDATED_FILE_DATA);
-    assertThat(testFile.getFileDataContentType()).isEqualTo(UPDATED_FILE_DATA_CONTENT_TYPE);
+    assertThat(testFile.getPathFileOriginal()).isEqualTo(UPDATED_PATH_FILE_ORIGINAL);
+    assertThat(testFile.getPathFileProcessed()).isEqualTo(UPDATED_PATH_FILE_PROCESSED);
     assertThat(testFile.getNameFile()).isEqualTo(UPDATED_NAME_FILE);
     assertThat(testFile.getExtension()).isEqualTo(UPDATED_EXTENSION);
     assertThat(testFile.getTypeFile()).isEqualTo(UPDATED_TYPE_FILE);
+    assertThat(testFile.getProcessed()).isEqualTo(UPDATED_PROCESSED);
     assertThat(testFile.getSearchField()).isEqualTo(UPDATED_SEARCH_FIELD);
     assertThat(testFile.getRole()).isEqualTo(UPDATED_ROLE);
     assertThat(testFile.getCreatedDate()).isEqualTo(UPDATED_CREATED_DATE);
@@ -366,17 +408,72 @@ class FileResourceIT
 
   @Test
   @Transactional
-  void updateNonExistingFile() throws Exception
+  void putNonExistingFile() throws Exception
   {
     int databaseSizeBeforeUpdate = fileRepository.findAll().size();
+    file.setId(count.incrementAndGet());
 
     // Create the File
     FileDTO fileDTO = fileMapper.toDto(file);
 
     // If the entity doesn't have an ID, it will throw BadRequestAlertException
     restFileMockMvc
-      .perform(put("/api/files").contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(fileDTO)))
+      .perform(
+        put(ENTITY_API_URL_ID, fileDTO.getId())
+          .contentType(MediaType.APPLICATION_JSON)
+          .content(TestUtil.convertObjectToJsonBytes(fileDTO))
+      )
       .andExpect(status().isBadRequest());
+
+    // Validate the File in the database
+    List<File> fileList = fileRepository.findAll();
+    assertThat(fileList).hasSize(databaseSizeBeforeUpdate);
+
+    // Validate the File in Elasticsearch
+    verify(mockFileSearchRepository, times(0)).save(file);
+  }
+
+  @Test
+  @Transactional
+  void putWithIdMismatchFile() throws Exception
+  {
+    int databaseSizeBeforeUpdate = fileRepository.findAll().size();
+    file.setId(count.incrementAndGet());
+
+    // Create the File
+    FileDTO fileDTO = fileMapper.toDto(file);
+
+    // If url ID doesn't match entity ID, it will throw BadRequestAlertException
+    restFileMockMvc
+      .perform(
+        put(ENTITY_API_URL_ID, count.incrementAndGet())
+          .contentType(MediaType.APPLICATION_JSON)
+          .content(TestUtil.convertObjectToJsonBytes(fileDTO))
+      )
+      .andExpect(status().isBadRequest());
+
+    // Validate the File in the database
+    List<File> fileList = fileRepository.findAll();
+    assertThat(fileList).hasSize(databaseSizeBeforeUpdate);
+
+    // Validate the File in Elasticsearch
+    verify(mockFileSearchRepository, times(0)).save(file);
+  }
+
+  @Test
+  @Transactional
+  void putWithMissingIdPathParamFile() throws Exception
+  {
+    int databaseSizeBeforeUpdate = fileRepository.findAll().size();
+    file.setId(count.incrementAndGet());
+
+    // Create the File
+    FileDTO fileDTO = fileMapper.toDto(file);
+
+    // If url ID doesn't match entity ID, it will throw BadRequestAlertException
+    restFileMockMvc
+      .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(fileDTO)))
+      .andExpect(status().isMethodNotAllowed());
 
     // Validate the File in the database
     List<File> fileList = fileRepository.findAll();
@@ -401,17 +498,16 @@ class FileResourceIT
 
     partialUpdatedFile
       .uuid(UPDATED_UUID)
-      .fileData(UPDATED_FILE_DATA)
-      .fileDataContentType(UPDATED_FILE_DATA_CONTENT_TYPE)
-      .extension(UPDATED_EXTENSION)
+      .pathFileOriginal(UPDATED_PATH_FILE_ORIGINAL)
+      .nameFile(UPDATED_NAME_FILE)
+      .typeFile(UPDATED_TYPE_FILE)
       .searchField(UPDATED_SEARCH_FIELD)
-      .createdDate(UPDATED_CREATED_DATE)
-      .modifiedDate(UPDATED_MODIFIED_DATE)
-      .createdBy(UPDATED_CREATED_BY);
+      .role(UPDATED_ROLE)
+      .createdDate(UPDATED_CREATED_DATE);
 
     restFileMockMvc
       .perform(
-        patch("/api/files")
+        patch(ENTITY_API_URL_ID, partialUpdatedFile.getId())
           .contentType("application/merge-patch+json")
           .content(TestUtil.convertObjectToJsonBytes(partialUpdatedFile))
       )
@@ -422,16 +518,17 @@ class FileResourceIT
     assertThat(fileList).hasSize(databaseSizeBeforeUpdate);
     File testFile = fileList.get(fileList.size() - 1);
     assertThat(testFile.getUuid()).isEqualTo(UPDATED_UUID);
-    assertThat(testFile.getFileData()).isEqualTo(UPDATED_FILE_DATA);
-    assertThat(testFile.getFileDataContentType()).isEqualTo(UPDATED_FILE_DATA_CONTENT_TYPE);
-    assertThat(testFile.getNameFile()).isEqualTo(DEFAULT_NAME_FILE);
-    assertThat(testFile.getExtension()).isEqualTo(UPDATED_EXTENSION);
-    assertThat(testFile.getTypeFile()).isEqualTo(DEFAULT_TYPE_FILE);
+    assertThat(testFile.getPathFileOriginal()).isEqualTo(UPDATED_PATH_FILE_ORIGINAL);
+    assertThat(testFile.getPathFileProcessed()).isEqualTo(DEFAULT_PATH_FILE_PROCESSED);
+    assertThat(testFile.getNameFile()).isEqualTo(UPDATED_NAME_FILE);
+    assertThat(testFile.getExtension()).isEqualTo(DEFAULT_EXTENSION);
+    assertThat(testFile.getTypeFile()).isEqualTo(UPDATED_TYPE_FILE);
+    assertThat(testFile.getProcessed()).isEqualTo(DEFAULT_PROCESSED);
     assertThat(testFile.getSearchField()).isEqualTo(UPDATED_SEARCH_FIELD);
-    assertThat(testFile.getRole()).isEqualTo(DEFAULT_ROLE);
+    assertThat(testFile.getRole()).isEqualTo(UPDATED_ROLE);
     assertThat(testFile.getCreatedDate()).isEqualTo(UPDATED_CREATED_DATE);
-    assertThat(testFile.getModifiedDate()).isEqualTo(UPDATED_MODIFIED_DATE);
-    assertThat(testFile.getCreatedBy()).isEqualTo(UPDATED_CREATED_BY);
+    assertThat(testFile.getModifiedDate()).isEqualTo(DEFAULT_MODIFIED_DATE);
+    assertThat(testFile.getCreatedBy()).isEqualTo(DEFAULT_CREATED_BY);
     assertThat(testFile.getModifiedBy()).isEqualTo(DEFAULT_MODIFIED_BY);
     assertThat(testFile.getDataSize()).isEqualTo(DEFAULT_DATA_SIZE);
     assertThat(testFile.getComment()).isEqualTo(DEFAULT_COMMENT);
@@ -452,11 +549,12 @@ class FileResourceIT
 
     partialUpdatedFile
       .uuid(UPDATED_UUID)
-      .fileData(UPDATED_FILE_DATA)
-      .fileDataContentType(UPDATED_FILE_DATA_CONTENT_TYPE)
+      .pathFileOriginal(UPDATED_PATH_FILE_ORIGINAL)
+      .pathFileProcessed(UPDATED_PATH_FILE_PROCESSED)
       .nameFile(UPDATED_NAME_FILE)
       .extension(UPDATED_EXTENSION)
       .typeFile(UPDATED_TYPE_FILE)
+      .processed(UPDATED_PROCESSED)
       .searchField(UPDATED_SEARCH_FIELD)
       .role(UPDATED_ROLE)
       .createdDate(UPDATED_CREATED_DATE)
@@ -468,7 +566,7 @@ class FileResourceIT
 
     restFileMockMvc
       .perform(
-        patch("/api/files")
+        patch(ENTITY_API_URL_ID, partialUpdatedFile.getId())
           .contentType("application/merge-patch+json")
           .content(TestUtil.convertObjectToJsonBytes(partialUpdatedFile))
       )
@@ -479,11 +577,12 @@ class FileResourceIT
     assertThat(fileList).hasSize(databaseSizeBeforeUpdate);
     File testFile = fileList.get(fileList.size() - 1);
     assertThat(testFile.getUuid()).isEqualTo(UPDATED_UUID);
-    assertThat(testFile.getFileData()).isEqualTo(UPDATED_FILE_DATA);
-    assertThat(testFile.getFileDataContentType()).isEqualTo(UPDATED_FILE_DATA_CONTENT_TYPE);
+    assertThat(testFile.getPathFileOriginal()).isEqualTo(UPDATED_PATH_FILE_ORIGINAL);
+    assertThat(testFile.getPathFileProcessed()).isEqualTo(UPDATED_PATH_FILE_PROCESSED);
     assertThat(testFile.getNameFile()).isEqualTo(UPDATED_NAME_FILE);
     assertThat(testFile.getExtension()).isEqualTo(UPDATED_EXTENSION);
     assertThat(testFile.getTypeFile()).isEqualTo(UPDATED_TYPE_FILE);
+    assertThat(testFile.getProcessed()).isEqualTo(UPDATED_PROCESSED);
     assertThat(testFile.getSearchField()).isEqualTo(UPDATED_SEARCH_FIELD);
     assertThat(testFile.getRole()).isEqualTo(UPDATED_ROLE);
     assertThat(testFile.getCreatedDate()).isEqualTo(UPDATED_CREATED_DATE);
@@ -496,18 +595,79 @@ class FileResourceIT
 
   @Test
   @Transactional
-  void partialUpdateFileShouldThrown() throws Exception
+  void patchNonExistingFile() throws Exception
   {
-    // Update the file without id should throw
-    File partialUpdatedFile = new File();
+    int databaseSizeBeforeUpdate = fileRepository.findAll().size();
+    file.setId(count.incrementAndGet());
 
+    // Create the File
+    FileDTO fileDTO = fileMapper.toDto(file);
+
+    // If the entity doesn't have an ID, it will throw BadRequestAlertException
     restFileMockMvc
       .perform(
-        patch("/api/files")
+        patch(ENTITY_API_URL_ID, fileDTO.getId())
           .contentType("application/merge-patch+json")
-          .content(TestUtil.convertObjectToJsonBytes(partialUpdatedFile))
+          .content(TestUtil.convertObjectToJsonBytes(fileDTO))
       )
       .andExpect(status().isBadRequest());
+
+    // Validate the File in the database
+    List<File> fileList = fileRepository.findAll();
+    assertThat(fileList).hasSize(databaseSizeBeforeUpdate);
+
+    // Validate the File in Elasticsearch
+    verify(mockFileSearchRepository, times(0)).save(file);
+  }
+
+  @Test
+  @Transactional
+  void patchWithIdMismatchFile() throws Exception
+  {
+    int databaseSizeBeforeUpdate = fileRepository.findAll().size();
+    file.setId(count.incrementAndGet());
+
+    // Create the File
+    FileDTO fileDTO = fileMapper.toDto(file);
+
+    // If url ID doesn't match entity ID, it will throw BadRequestAlertException
+    restFileMockMvc
+      .perform(
+        patch(ENTITY_API_URL_ID, count.incrementAndGet())
+          .contentType("application/merge-patch+json")
+          .content(TestUtil.convertObjectToJsonBytes(fileDTO))
+      )
+      .andExpect(status().isBadRequest());
+
+    // Validate the File in the database
+    List<File> fileList = fileRepository.findAll();
+    assertThat(fileList).hasSize(databaseSizeBeforeUpdate);
+
+    // Validate the File in Elasticsearch
+    verify(mockFileSearchRepository, times(0)).save(file);
+  }
+
+  @Test
+  @Transactional
+  void patchWithMissingIdPathParamFile() throws Exception
+  {
+    int databaseSizeBeforeUpdate = fileRepository.findAll().size();
+    file.setId(count.incrementAndGet());
+
+    // Create the File
+    FileDTO fileDTO = fileMapper.toDto(file);
+
+    // If url ID doesn't match entity ID, it will throw BadRequestAlertException
+    restFileMockMvc
+      .perform(patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(fileDTO)))
+      .andExpect(status().isMethodNotAllowed());
+
+    // Validate the File in the database
+    List<File> fileList = fileRepository.findAll();
+    assertThat(fileList).hasSize(databaseSizeBeforeUpdate);
+
+    // Validate the File in Elasticsearch
+    verify(mockFileSearchRepository, times(0)).save(file);
   }
 
   @Test
@@ -521,7 +681,7 @@ class FileResourceIT
 
     // Delete the file
     restFileMockMvc
-      .perform(delete("/api/files/{id}", file.getId()).accept(MediaType.APPLICATION_JSON))
+      .perform(delete(ENTITY_API_URL_ID, file.getId()).accept(MediaType.APPLICATION_JSON))
       .andExpect(status().isNoContent());
 
     // Validate the database contains one less item
@@ -544,16 +704,17 @@ class FileResourceIT
 
     // Search the file
     restFileMockMvc
-      .perform(get("/api/_search/files?query=id:" + file.getId()))
+      .perform(get(ENTITY_SEARCH_API_URL + "?query=id:" + file.getId()))
       .andExpect(status().isOk())
       .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
       .andExpect(jsonPath("$.[*].id").value(hasItem(file.getId().intValue())))
       .andExpect(jsonPath("$.[*].uuid").value(hasItem(DEFAULT_UUID.toString())))
-      .andExpect(jsonPath("$.[*].fileDataContentType").value(hasItem(DEFAULT_FILE_DATA_CONTENT_TYPE)))
-      .andExpect(jsonPath("$.[*].fileData").value(hasItem(Base64Utils.encodeToString(DEFAULT_FILE_DATA))))
+      .andExpect(jsonPath("$.[*].pathFileOriginal").value(hasItem(DEFAULT_PATH_FILE_ORIGINAL)))
+      .andExpect(jsonPath("$.[*].pathFileProcessed").value(hasItem(DEFAULT_PATH_FILE_PROCESSED)))
       .andExpect(jsonPath("$.[*].nameFile").value(hasItem(DEFAULT_NAME_FILE)))
       .andExpect(jsonPath("$.[*].extension").value(hasItem(DEFAULT_EXTENSION)))
       .andExpect(jsonPath("$.[*].typeFile").value(hasItem(DEFAULT_TYPE_FILE)))
+      .andExpect(jsonPath("$.[*].processed").value(hasItem(DEFAULT_PROCESSED.booleanValue())))
       .andExpect(jsonPath("$.[*].searchField").value(hasItem(DEFAULT_SEARCH_FIELD)))
       .andExpect(jsonPath("$.[*].role").value(hasItem(DEFAULT_ROLE)))
       .andExpect(jsonPath("$.[*].createdDate").value(hasItem(DEFAULT_CREATED_DATE.toString())))

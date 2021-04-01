@@ -1,65 +1,58 @@
 {
-  "name": "File",
+  "name": "Comment",
   "fields": [
     {
       "fieldName": "uuid",
       "fieldType": "UUID",
-      "javadoc": "the uuid equivalent id (primary key)",
+      "javadoc": "uuid",
       "fieldValidateRules": [
         "required",
         "unique"
       ]
     },
     {
-      "fieldName": "pathFileOriginal",
-      "fieldType": "String",
-      "javadoc": "pathFileOriginal path of File (original)"
-    },
-    {
-      "fieldName": "pathFileProcessed",
-      "fieldType": "String",
-      "javadoc": "pathFileProcessed path of File (processed)"
-    },
-    {
-      "fieldName": "nameFile",
-      "fieldType": "String",
-      "javadoc": "name of file (Default is uuid + extension)",
-      "fieldValidateRules": [
-        "maxlength"
-      ],
-      "fieldValidateRulesMaxlength": "1024"
-    },
-    {
-      "fieldName": "extension",
-      "fieldType": "String",
-      "javadoc": "extension of video (Example .mp4 ... )",
-      "fieldValidateRules": [
-        "maxlength"
-      ],
-      "fieldValidateRulesMaxlength": "16"
-    },
-    {
-      "fieldName": "typeFile",
-      "fieldType": "String",
-      "javadoc": "typeFile",
-      "fieldValidateRules": [
-        "maxlength"
-      ],
-      "fieldValidateRulesMaxlength": "32"
-    },
-    {
-      "fieldName": "processed",
-      "fieldType": "Boolean",
-      "javadoc": "file processed set value to true (default false)",
+      "fieldName": "groupId",
+      "fieldType": "UUID",
+      "javadoc": "groupId",
       "fieldValidateRules": [
         "required"
       ]
     },
     {
+      "fieldName": "classPK",
+      "fieldType": "String",
+      "javadoc": "classPK is class of entity use comment Example(org.regitiny.minhshop.domain.SimplePost)",
+      "fieldValidateRules": [
+        "required"
+      ]
+    },
+    {
+      "fieldName": "content",
+      "fieldType": "String",
+      "javadoc": "content",
+      "fieldValidateRules": [
+        "maxlength"
+      ],
+      "fieldValidateRulesMaxlength": "2048"
+    },
+    {
+      "fieldName": "level",
+      "fieldType": "Integer",
+      "javadoc": "level of comment 0-5",
+      "fieldValidateRules": [
+        "required",
+        "max"
+      ],
+      "fieldValidateRulesMax": "10"
+    },
+    {
       "fieldName": "searchField",
-      "fieldType": "byte[]",
+      "fieldType": "String",
       "javadoc": "searchField",
-      "fieldTypeBlobContent": "text"
+      "fieldValidateRules": [
+        "maxlength"
+      ],
+      "fieldValidateRulesMaxlength": "2048"
     },
     {
       "fieldName": "role",
@@ -94,20 +87,11 @@
       "fieldName": "dataSize",
       "fieldType": "Long",
       "javadoc": "dataSize"
-    },
-    {
-      "fieldName": "comment",
-      "fieldType": "String",
-      "javadoc": "comment",
-      "fieldValidateRules": [
-        "maxlength"
-      ],
-      "fieldValidateRulesMaxlength": "2048"
     }
   ],
   "relationships": [],
-  "javadoc": "The File entity.\\n@author yuvytung",
-  "entityTableName": "file",
+  "javadoc": "The Comment entity.\\n@author a true jhipster",
+  "entityTableName": "comment",
   "dto": "mapstruct",
   "pagination": "infinite-scroll",
   "service": "serviceImpl",
@@ -117,5 +101,5 @@
   "embedded": false,
   "applications": "*",
   "searchEngine": "elasticsearch",
-  "changelogDate": "20210130161423"
+  "changelogDate": "20210331183853"
 }

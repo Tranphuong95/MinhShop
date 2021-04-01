@@ -1,6 +1,7 @@
 package org.regitiny.minhshop.service.impl;
 
 import lombok.extern.log4j.Log4j2;
+import org.regitiny.minhshop.config.constant.ServerCommand;
 import org.regitiny.minhshop.domain.File;
 import org.regitiny.minhshop.repository.FileRepository;
 import org.regitiny.minhshop.repository.search.FileSearchRepository;
@@ -18,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.Optional;
 
 import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
@@ -61,32 +61,25 @@ public class FileServiceImpl implements FileService
     SecurityUtils.checkAuthenticationAndAuthority(AuthoritiesConstants.MANAGEMENT);
 
     File file = (File) EntityDefaultPropertiesServiceUtils.setPropertiesBeforeSave(new File());
-    try
-    {
-      String nameFile = file.getUuid().toString();
-      byte[] fileDataBytes = fileData.getBytes();
-      String extension = StringPool.BLANK;
-      String typeFile = fileData.getContentType();
-      long dataSize = fileData.getSize();
-      String comment = null;
+    String nameFile = file.getUuid().toString();
+    String extension = StringPool.BLANK;
+    String typeFile = fileData.getContentType();
+    long dataSize = fileData.getSize();
+    String comment = null;
 
-      String imageDataName = fileData.getOriginalFilename();
-      String[] temp = imageDataName != null ? imageDataName.split(StringPool.DOT_IN_REGEX) : new String[0];
-      if (temp.length >= 2) extension = temp[temp.length - 1];
-      nameFile += StringPool.PERIOD + extension;
+    String fileDataName = fileData.getOriginalFilename();
+    String[] temp = fileDataName != null ? fileDataName.split(StringPool.DOT_IN_REGEX) : new String[0];
+    if (temp.length >= 2) extension = temp[temp.length - 1];
+    nameFile += StringPool.PERIOD + extension;
 
-      file.fileData(fileDataBytes)
-        .nameFile(nameFile)
-        .dataSize(dataSize)
-        .fileDataContentType(typeFile)
-        .typeFile(typeFile)
-        .extension(extension)
-        .comment(comment);
-    }
-    catch (IOException e)
-    {
-      log.debug(" IOException = {}", e.getMessage());
-    }
+    file.nameFile(nameFile)
+      .pathFileOriginal(ServerCommand.getFOLDER_INPUT())
+      .pathFileProcessed(ServerCommand.getFOLDER_OUTPUT())
+      .processed(false)
+      .dataSize(dataSize)
+      .typeFile(typeFile)
+      .extension(extension)
+      .comment(comment);
     return fileMapper.toDto(fileRepository.save(file));
 
   }

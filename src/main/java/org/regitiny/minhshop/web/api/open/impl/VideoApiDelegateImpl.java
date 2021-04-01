@@ -73,7 +73,8 @@ public class VideoApiDelegateImpl implements VideoApiDelegate
     return fileService.getFileByFileName(videoName)
       .map(file ->
       {
-        var fileData = file.getFileData();
+        byte[] fileData = null;
+//        var fileData = file.getFileData();
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add(HttpHeaders.CONTENT_TYPE, file.getTypeFile());
         return ResponseEntity.ok().headers(httpHeaders).body(fileData);

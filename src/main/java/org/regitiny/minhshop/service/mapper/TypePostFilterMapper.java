@@ -1,9 +1,6 @@
 package org.regitiny.minhshop.service.mapper;
 
-import org.mapstruct.BeanMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Named;
+import org.mapstruct.*;
 import org.regitiny.minhshop.domain.TypePostFilter;
 import org.regitiny.minhshop.service.dto.TypePostFilterDTO;
 
@@ -12,7 +9,7 @@ import java.util.Set;
 /**
  * Mapper for the entity {@link TypePostFilter} and its DTO {@link TypePostFilterDTO}.
  */
-@Mapper(componentModel = "spring", uses = {})
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = "spring", uses = {})
 public interface TypePostFilterMapper extends EntityMapper<TypePostFilterDTO, TypePostFilter>
 {
   @Named("typeFilterNameSet")

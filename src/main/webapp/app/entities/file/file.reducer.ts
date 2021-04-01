@@ -20,6 +20,7 @@ export const ACTION_TYPES = {
   FETCH_FILE: 'file/FETCH_FILE',
   CREATE_FILE: 'file/CREATE_FILE',
   UPDATE_FILE: 'file/UPDATE_FILE',
+  PARTIAL_UPDATE_FILE: 'file/PARTIAL_UPDATE_FILE',
   DELETE_FILE: 'file/DELETE_FILE',
   SET_BLOB: 'file/SET_BLOB',
   RESET: 'file/RESET',
@@ -56,6 +57,7 @@ export default (state: FileState = initialState, action): FileState =>
     case REQUEST(ACTION_TYPES.CREATE_FILE):
     case REQUEST(ACTION_TYPES.UPDATE_FILE):
     case REQUEST(ACTION_TYPES.DELETE_FILE):
+    case REQUEST(ACTION_TYPES.PARTIAL_UPDATE_FILE):
       return {
         ...state,
         errorMessage: null,
@@ -67,6 +69,7 @@ export default (state: FileState = initialState, action): FileState =>
     case FAILURE(ACTION_TYPES.FETCH_FILE):
     case FAILURE(ACTION_TYPES.CREATE_FILE):
     case FAILURE(ACTION_TYPES.UPDATE_FILE):
+    case FAILURE(ACTION_TYPES.PARTIAL_UPDATE_FILE):
     case FAILURE(ACTION_TYPES.DELETE_FILE):
       return {
         ...state,
@@ -96,6 +99,7 @@ export default (state: FileState = initialState, action): FileState =>
       };
     case SUCCESS(ACTION_TYPES.CREATE_FILE):
     case SUCCESS(ACTION_TYPES.UPDATE_FILE):
+    case SUCCESS(ACTION_TYPES.PARTIAL_UPDATE_FILE):
       return {
         ...state,
         updating: false,
@@ -171,7 +175,16 @@ export const updateEntity: ICrudPutAction<IFile> = entity => async dispatch =>
 {
   const result = await dispatch({
     type: ACTION_TYPES.UPDATE_FILE,
-    payload: axios.put(apiUrl, cleanEntity(entity)),
+    payload: axios.put(`${apiUrl}/${entity.id}`, cleanEntity(entity)),
+  });
+  return result;
+};
+
+export const partialUpdate: ICrudPutAction<IFile> = entity => async dispatch =>
+{
+  const result = await dispatch({
+    type: ACTION_TYPES.PARTIAL_UPDATE_FILE,
+    payload: axios.patch(`${apiUrl}/${entity.id}`, cleanEntity(entity)),
   });
   return result;
 };

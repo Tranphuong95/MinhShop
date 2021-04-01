@@ -1,16 +1,13 @@
 package org.regitiny.minhshop.service.mapper;
 
-import org.mapstruct.BeanMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Named;
+import org.mapstruct.*;
 import org.regitiny.minhshop.domain.PostDetails;
 import org.regitiny.minhshop.service.dto.PostDetailsDTO;
 
 /**
  * Mapper for the entity {@link PostDetails} and its DTO {@link PostDetailsDTO}.
  */
-@Mapper(componentModel = "spring", uses = {})
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = "spring", uses = {})
 public interface PostDetailsMapper extends EntityMapper<PostDetailsDTO, PostDetails>
 {
   @Named("postDetailsId")

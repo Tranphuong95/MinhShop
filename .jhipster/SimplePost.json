@@ -63,7 +63,11 @@
     {
       "fieldName": "simpleContent",
       "fieldType": "String",
-      "javadoc": "simple content"
+      "javadoc": "simple content",
+      "fieldValidateRules": [
+        "maxlength"
+      ],
+      "fieldValidateRulesMaxlength": "2048"
     },
     {
       "fieldName": "otherInfo",
@@ -79,7 +83,11 @@
     {
       "fieldName": "role",
       "fieldType": "String",
-      "javadoc": "role"
+      "javadoc": "role",
+      "fieldValidateRules": [
+        "maxlength"
+      ],
+      "fieldValidateRulesMaxlength": "2048"
     },
     {
       "fieldName": "createdDate",

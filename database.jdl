@@ -1,6 +1,6 @@
 DEFAULT_MIN_LENGTH = 1
 DEFAULT_MAX_LENGTH = 2048
-MAX_STRING=10000
+MAX_STRING=16383
 DEFAULT_MIN_BYTES = 1
 DEFAULT_MAX_BYTES = 52428800
 DEFAULT_MIN = 0
@@ -23,7 +23,7 @@ entity PostDetails {
     /** searchField */
     searchField TextBlob
     /** role */
-    role String
+    role String maxlength(DEFAULT_MAX_LENGTH)
     /** createdDate */
     createdDate  Instant
     /** modifiedDate */
@@ -58,14 +58,14 @@ entity SimplePost {
     /** scores */
     scores Float min(0) max(100)
     /** simple content */
-    simpleContent String
+    simpleContent String maxlength(DEFAULT_MAX_LENGTH)
     /** otherInfo (Json) */
     otherInfo String
 
     /** searchField */
     searchField TextBlob
     /** role */
-    role String
+    role String maxlength(DEFAULT_MAX_LENGTH)
     /** createdDate */
     createdDate  Instant
     /** modifiedDate */
@@ -95,7 +95,7 @@ entity TypePost
     /** searchField */
     searchField TextBlob
     /** role */
-    role String
+    role String maxlength(DEFAULT_MAX_LENGTH)
     /** createdDate */
     createdDate  Instant
     /** modifiedDate */
@@ -124,7 +124,7 @@ entity TypePostFilter
     /** searchField */
     searchField TextBlob
     /** role */
-    role String
+    role String maxlength(DEFAULT_MAX_LENGTH)
     /** createdDate */
     createdDate  Instant
     /** modifiedDate */
@@ -159,7 +159,7 @@ entity Image {
     /** searchField */
     searchField TextBlob
     /** role */
-    role String
+    role String maxlength(DEFAULT_MAX_LENGTH)
     /** createdDate */
     createdDate  Instant
     /** modifiedDate */
@@ -191,11 +191,14 @@ entity File {
     extension String maxlength(16)
     /** typeFile */
     typeFile String maxlength(32)
+    /** file processed set value to true (default false)*/
+    processed Boolean required
+
 
     /** searchField */
     searchField TextBlob
     /** role */
-    role String
+    role String maxlength(DEFAULT_MAX_LENGTH)
     /** createdDate */
     createdDate  Instant
     /** modifiedDate */
@@ -224,7 +227,7 @@ entity Payment
     /** searchField */
     searchField TextBlob
     /** role */
-    role String
+    role String maxlength(DEFAULT_MAX_LENGTH)
     /** createdDate */
     createdDate  Instant
     /** modifiedDate */
@@ -257,16 +260,13 @@ entity Bill
     addressDetails String
     /** addressCode */
     addressCode String
-    /** addressDetails */
-    addressDetails String
+    /** product */
     product String maxlength(MAX_STRING)
-    /** comment */
-    comment String maxlength(DEFAULT_MAX_LENGTH)
 
     /** searchField */
     searchField TextBlob
     /** role */
-    role String
+    role String maxlength(DEFAULT_MAX_LENGTH)
     /** createdDate */
     createdDate  Instant
     /** modifiedDate */
@@ -290,7 +290,7 @@ entity UserOtherInfo
     /** uuid */
     uuid UUID required unique
     /** phoneNumber */
-    phoneNumber String minlength(10) maxlength(10) pattern(/[0-9]+/)
+    phoneNumber String minlength(8) maxlength(16) pattern(/[0-9]+/)
     /** email */
     email String
     /** wardCode */
@@ -306,7 +306,7 @@ entity UserOtherInfo
     /** cityName */
     cityName String
     /** addressDetails */
-    addressDetails String
+    addressDetails String maxlength(DEFAULT_MAX_LENGTH)
     /** dateOfBirth */
     dateOfBirth LocalDate
     /** otherInfo */
@@ -315,7 +315,7 @@ entity UserOtherInfo
     /** searchField */
     searchField TextBlob
     /** role */
-    role String
+    role String maxlength(DEFAULT_MAX_LENGTH)
     /** createdDate */
     createdDate  Instant
     /** modifiedDate */
@@ -328,6 +328,39 @@ entity UserOtherInfo
     dataSize Long
     /** comment */
     comment String maxlength(DEFAULT_MAX_LENGTH)
+}
+
+/**
+  * The Comment entity.
+  * @author a true jhipster
+  */
+entity Comment
+{
+    /** uuid */
+    uuid UUID required unique
+    /** groupId */
+    groupId UUID required
+    /** classPK is class of entity use comment Example(org.regitiny.minhshop.domain.SimplePost) */
+    classPK String required
+    /** content */
+    content String maxlength(DEFAULT_MAX_LENGTH)
+    /** level of comment 0-5 */
+    level Integer required max(10)
+
+    /** searchField */
+    searchField String maxlength(DEFAULT_MAX_LENGTH)
+    /** role */
+    role String maxlength(DEFAULT_MAX_LENGTH)
+    /** createdDate */
+    createdDate  Instant
+    /** modifiedDate */
+    modifiedDate  Instant
+    /** createdBy */
+    createdBy String
+    /** modifiedBy */
+    modifiedBy String
+    /** dataSize */
+    dataSize Long
 }
 
 

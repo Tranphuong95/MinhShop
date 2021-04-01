@@ -19,8 +19,8 @@
         "maxlength",
         "pattern"
       ],
-      "fieldValidateRulesMinlength": "10",
-      "fieldValidateRulesMaxlength": "10",
+      "fieldValidateRulesMinlength": "8",
+      "fieldValidateRulesMaxlength": "16",
       "fieldValidateRulesPattern": "[0-9]+"
     },
     {
@@ -44,9 +44,28 @@
       "javadoc": "cityCode"
     },
     {
+      "fieldName": "wardName",
+      "fieldType": "String",
+      "javadoc": "wardName"
+    },
+    {
+      "fieldName": "distName",
+      "fieldType": "String",
+      "javadoc": "distName"
+    },
+    {
+      "fieldName": "cityName",
+      "fieldType": "String",
+      "javadoc": "cityName"
+    },
+    {
       "fieldName": "addressDetails",
       "fieldType": "String",
-      "javadoc": "addressDetails"
+      "javadoc": "addressDetails",
+      "fieldValidateRules": [
+        "maxlength"
+      ],
+      "fieldValidateRulesMaxlength": "2048"
     },
     {
       "fieldName": "dateOfBirth",
@@ -67,7 +86,11 @@
     {
       "fieldName": "role",
       "fieldType": "String",
-      "javadoc": "role"
+      "javadoc": "role",
+      "fieldValidateRules": [
+        "maxlength"
+      ],
+      "fieldValidateRulesMaxlength": "2048"
     },
     {
       "fieldName": "createdDate",

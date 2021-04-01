@@ -1,22 +1,20 @@
 import {by, element, ElementFinder, protractor} from 'protractor';
 import {isVisible, waitUntilDisplayed, waitUntilHidden} from '../../util/utils';
 
-import path from 'path';
-
 const expect = chai.expect;
 
-const fileToUpload = '../../../../../../src/main/webapp/content/images/logo-jhipster.png';
-const absolutePath = path.resolve(__dirname, fileToUpload);
 export default class FileUpdatePage
 {
   pageTitle: ElementFinder = element(by.id('minhShopApp.file.home.createOrEditLabel'));
   saveButton: ElementFinder = element(by.id('save-entity'));
   cancelButton: ElementFinder = element(by.id('cancel-save'));
   uuidInput: ElementFinder = element(by.css('input#file-uuid'));
-  fileDataInput: ElementFinder = element(by.css('input#file_fileData'));
+  pathFileOriginalInput: ElementFinder = element(by.css('input#file-pathFileOriginal'));
+  pathFileProcessedInput: ElementFinder = element(by.css('input#file-pathFileProcessed'));
   nameFileInput: ElementFinder = element(by.css('input#file-nameFile'));
   extensionInput: ElementFinder = element(by.css('input#file-extension'));
   typeFileInput: ElementFinder = element(by.css('input#file-typeFile'));
+  processedInput: ElementFinder = element(by.css('input#file-processed'));
   searchFieldInput: ElementFinder = element(by.css('textarea#file-searchField'));
   roleInput: ElementFinder = element(by.css('input#file-role'));
   createdDateInput: ElementFinder = element(by.css('input#file-createdDate'));
@@ -41,14 +39,24 @@ export default class FileUpdatePage
     return this.uuidInput.getAttribute('value');
   }
 
-  async setFileDataInput(fileData)
+  async setPathFileOriginalInput(pathFileOriginal)
   {
-    await this.fileDataInput.sendKeys(fileData);
+    await this.pathFileOriginalInput.sendKeys(pathFileOriginal);
   }
 
-  async getFileDataInput()
+  async getPathFileOriginalInput()
   {
-    return this.fileDataInput.getAttribute('value');
+    return this.pathFileOriginalInput.getAttribute('value');
+  }
+
+  async setPathFileProcessedInput(pathFileProcessed)
+  {
+    await this.pathFileProcessedInput.sendKeys(pathFileProcessed);
+  }
+
+  async getPathFileProcessedInput()
+  {
+    return this.pathFileProcessedInput.getAttribute('value');
   }
 
   async setNameFileInput(nameFile)
@@ -79,6 +87,11 @@ export default class FileUpdatePage
   async getTypeFileInput()
   {
     return this.typeFileInput.getAttribute('value');
+  }
+
+  getProcessedInput()
+  {
+    return this.processedInput;
   }
 
   async setSearchFieldInput(searchField)
@@ -182,7 +195,11 @@ export default class FileUpdatePage
     await this.setUuidInput('64c99148-3908-465d-8c4a-e510e3ade974');
     expect(await this.getUuidInput()).to.match(/64c99148-3908-465d-8c4a-e510e3ade974/);
     await waitUntilDisplayed(this.saveButton);
-    await this.setFileDataInput(absolutePath);
+    await this.setPathFileOriginalInput('pathFileOriginal');
+    expect(await this.getPathFileOriginalInput()).to.match(/pathFileOriginal/);
+    await waitUntilDisplayed(this.saveButton);
+    await this.setPathFileProcessedInput('pathFileProcessed');
+    expect(await this.getPathFileProcessedInput()).to.match(/pathFileProcessed/);
     await waitUntilDisplayed(this.saveButton);
     await this.setNameFileInput('nameFile');
     expect(await this.getNameFileInput()).to.match(/nameFile/);
@@ -192,6 +209,18 @@ export default class FileUpdatePage
     await waitUntilDisplayed(this.saveButton);
     await this.setTypeFileInput('typeFile');
     expect(await this.getTypeFileInput()).to.match(/typeFile/);
+    await waitUntilDisplayed(this.saveButton);
+    const selectedProcessed = await this.getProcessedInput().isSelected();
+    if (selectedProcessed)
+    {
+      await this.getProcessedInput().click();
+      expect(await this.getProcessedInput().isSelected()).to.be.false;
+    }
+    else
+    {
+      await this.getProcessedInput().click();
+      expect(await this.getProcessedInput().isSelected()).to.be.true;
+    }
     await waitUntilDisplayed(this.saveButton);
     await this.setSearchFieldInput('searchField');
     expect(await this.getSearchFieldInput()).to.match(/searchField/);

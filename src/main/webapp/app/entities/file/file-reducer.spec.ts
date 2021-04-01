@@ -6,7 +6,17 @@ import thunk from 'redux-thunk';
 import sinon from 'sinon';
 import {parseHeaderForLinks} from 'react-jhipster';
 
-import reducer, {ACTION_TYPES, createEntity, deleteEntity, getEntities, getEntity, getSearchEntities, reset, updateEntity,} from './file.reducer';
+import reducer, {
+  ACTION_TYPES,
+  createEntity,
+  deleteEntity,
+  getEntities,
+  getEntity,
+  getSearchEntities,
+  partialUpdate,
+  reset,
+  updateEntity,
+} from './file.reducer';
 import {FAILURE, REQUEST, SUCCESS} from 'app/shared/reducers/action-type.util';
 import {defaultValue, IFile} from 'app/shared/model/file.model';
 
@@ -86,7 +96,12 @@ describe('Entities reducer tests', () =>
     it('should set state to updating', () =>
     {
       testMultipleTypes(
-        [REQUEST(ACTION_TYPES.CREATE_FILE), REQUEST(ACTION_TYPES.UPDATE_FILE), REQUEST(ACTION_TYPES.DELETE_FILE)],
+        [
+          REQUEST(ACTION_TYPES.CREATE_FILE),
+          REQUEST(ACTION_TYPES.UPDATE_FILE),
+          REQUEST(ACTION_TYPES.PARTIAL_UPDATE_FILE),
+          REQUEST(ACTION_TYPES.DELETE_FILE),
+        ],
         {},
         state =>
         {
@@ -125,6 +140,7 @@ describe('Entities reducer tests', () =>
           FAILURE(ACTION_TYPES.FETCH_FILE),
           FAILURE(ACTION_TYPES.CREATE_FILE),
           FAILURE(ACTION_TYPES.UPDATE_FILE),
+          FAILURE(ACTION_TYPES.PARTIAL_UPDATE_FILE),
           FAILURE(ACTION_TYPES.DELETE_FILE),
         ],
         'error message',
@@ -234,6 +250,7 @@ describe('Entities reducer tests', () =>
       axios.get = sinon.stub().returns(Promise.resolve(resolvedObject));
       axios.post = sinon.stub().returns(Promise.resolve(resolvedObject));
       axios.put = sinon.stub().returns(Promise.resolve(resolvedObject));
+      axios.patch = sinon.stub().returns(Promise.resolve(resolvedObject));
       axios.delete = sinon.stub().returns(Promise.resolve(resolvedObject));
     });
 
@@ -289,7 +306,7 @@ describe('Entities reducer tests', () =>
           payload: resolvedObject,
         },
       ];
-      await store.dispatch(createEntity({id: 1})).then(() => expect(store.getActions()).toEqual(expectedActions));
+      await store.dispatch(createEntity({id: 456})).then(() => expect(store.getActions()).toEqual(expectedActions));
     });
 
     it('dispatches ACTION_TYPES.UPDATE_FILE actions', async () =>
@@ -303,7 +320,21 @@ describe('Entities reducer tests', () =>
           payload: resolvedObject,
         },
       ];
-      await store.dispatch(updateEntity({id: 1})).then(() => expect(store.getActions()).toEqual(expectedActions));
+      await store.dispatch(updateEntity({id: 456})).then(() => expect(store.getActions()).toEqual(expectedActions));
+    });
+
+    it('dispatches ACTION_TYPES.PARTIAL_UPDATE_FILE actions', async () =>
+    {
+      const expectedActions = [
+        {
+          type: REQUEST(ACTION_TYPES.PARTIAL_UPDATE_FILE),
+        },
+        {
+          type: SUCCESS(ACTION_TYPES.PARTIAL_UPDATE_FILE),
+          payload: resolvedObject,
+        },
+      ];
+      await store.dispatch(partialUpdate({id: 1})).then(() => expect(store.getActions()).toEqual(expectedActions));
     });
 
     it('dispatches ACTION_TYPES.DELETE_FILE actions', async () =>

@@ -37,15 +37,16 @@ public class File implements Serializable
   private UUID uuid;
 
   /**
-   * fileData is data of video in binary form
+   * pathFileOriginal path of File (original)
    */
+  @Column(name = "path_file_original")
+  private String pathFileOriginal;
 
-  @Lob
-  @Column(name = "file_data", nullable = false)
-  private byte[] fileData;
-
-  @Column(name = "file_data_content_type", nullable = false)
-  private String fileDataContentType;
+  /**
+   * pathFileProcessed path of File (processed)
+   */
+  @Column(name = "path_file_processed")
+  private String pathFileProcessed;
 
   /**
    * name of file (Default is uuid + extension)
@@ -69,6 +70,13 @@ public class File implements Serializable
   private String typeFile;
 
   /**
+   * file processed set value to true (default false)
+   */
+  @NotNull
+  @Column(name = "processed", nullable = false)
+  private Boolean processed;
+
+  /**
    * searchField
    */
   @Lob
@@ -78,7 +86,8 @@ public class File implements Serializable
   /**
    * role
    */
-  @Column(name = "role")
+  @Size(max = 2048)
+  @Column(name = "role", length = 2048)
   private String role;
 
   /**
@@ -140,46 +149,46 @@ public class File implements Serializable
     return this.uuid;
   }
 
-  public void setUuid(UUID uuid)
-  {
-    this.uuid = uuid;
-  }
-
   public File uuid(UUID uuid)
   {
     this.uuid = uuid;
     return this;
   }
 
-  public byte[] getFileData()
+  public void setUuid(UUID uuid)
   {
-    return this.fileData;
+    this.uuid = uuid;
   }
 
-  public void setFileData(byte[] fileData)
+  public String getPathFileOriginal()
   {
-    this.fileData = fileData;
+    return this.pathFileOriginal;
   }
 
-  public File fileData(byte[] fileData)
+  public void setPathFileOriginal(String pathFileOriginal)
   {
-    this.fileData = fileData;
+    this.pathFileOriginal = pathFileOriginal;
+  }
+
+  public File pathFileOriginal(String pathFileOriginal)
+  {
+    this.pathFileOriginal = pathFileOriginal;
     return this;
   }
 
-  public String getFileDataContentType()
+  public String getPathFileProcessed()
   {
-    return this.fileDataContentType;
+    return this.pathFileProcessed;
   }
 
-  public void setFileDataContentType(String fileDataContentType)
+  public void setPathFileProcessed(String pathFileProcessed)
   {
-    this.fileDataContentType = fileDataContentType;
+    this.pathFileProcessed = pathFileProcessed;
   }
 
-  public File fileDataContentType(String fileDataContentType)
+  public File pathFileProcessed(String pathFileProcessed)
   {
-    this.fileDataContentType = fileDataContentType;
+    this.pathFileProcessed = pathFileProcessed;
     return this;
   }
 
@@ -188,25 +197,20 @@ public class File implements Serializable
     return this.nameFile;
   }
 
-  public void setNameFile(String nameFile)
-  {
-    this.nameFile = nameFile;
-  }
-
   public File nameFile(String nameFile)
   {
     this.nameFile = nameFile;
     return this;
   }
 
+  public void setNameFile(String nameFile)
+  {
+    this.nameFile = nameFile;
+  }
+
   public String getExtension()
   {
     return this.extension;
-  }
-
-  public void setExtension(String extension)
-  {
-    this.extension = extension;
   }
 
   public File extension(String extension)
@@ -215,14 +219,14 @@ public class File implements Serializable
     return this;
   }
 
+  public void setExtension(String extension)
+  {
+    this.extension = extension;
+  }
+
   public String getTypeFile()
   {
     return this.typeFile;
-  }
-
-  public void setTypeFile(String typeFile)
-  {
-    this.typeFile = typeFile;
   }
 
   public File typeFile(String typeFile)
@@ -231,14 +235,30 @@ public class File implements Serializable
     return this;
   }
 
+  public void setTypeFile(String typeFile)
+  {
+    this.typeFile = typeFile;
+  }
+
+  public Boolean getProcessed()
+  {
+    return this.processed;
+  }
+
+  public void setProcessed(Boolean processed)
+  {
+    this.processed = processed;
+  }
+
+  public File processed(Boolean processed)
+  {
+    this.processed = processed;
+    return this;
+  }
+
   public String getSearchField()
   {
     return this.searchField;
-  }
-
-  public void setSearchField(String searchField)
-  {
-    this.searchField = searchField;
   }
 
   public File searchField(String searchField)
@@ -247,14 +267,14 @@ public class File implements Serializable
     return this;
   }
 
+  public void setSearchField(String searchField)
+  {
+    this.searchField = searchField;
+  }
+
   public String getRole()
   {
     return this.role;
-  }
-
-  public void setRole(String role)
-  {
-    this.role = role;
   }
 
   public File role(String role)
@@ -263,14 +283,14 @@ public class File implements Serializable
     return this;
   }
 
+  public void setRole(String role)
+  {
+    this.role = role;
+  }
+
   public Instant getCreatedDate()
   {
     return this.createdDate;
-  }
-
-  public void setCreatedDate(Instant createdDate)
-  {
-    this.createdDate = createdDate;
   }
 
   public File createdDate(Instant createdDate)
@@ -279,14 +299,14 @@ public class File implements Serializable
     return this;
   }
 
+  public void setCreatedDate(Instant createdDate)
+  {
+    this.createdDate = createdDate;
+  }
+
   public Instant getModifiedDate()
   {
     return this.modifiedDate;
-  }
-
-  public void setModifiedDate(Instant modifiedDate)
-  {
-    this.modifiedDate = modifiedDate;
   }
 
   public File modifiedDate(Instant modifiedDate)
@@ -295,14 +315,14 @@ public class File implements Serializable
     return this;
   }
 
+  public void setModifiedDate(Instant modifiedDate)
+  {
+    this.modifiedDate = modifiedDate;
+  }
+
   public String getCreatedBy()
   {
     return this.createdBy;
-  }
-
-  public void setCreatedBy(String createdBy)
-  {
-    this.createdBy = createdBy;
   }
 
   public File createdBy(String createdBy)
@@ -311,14 +331,14 @@ public class File implements Serializable
     return this;
   }
 
+  public void setCreatedBy(String createdBy)
+  {
+    this.createdBy = createdBy;
+  }
+
   public String getModifiedBy()
   {
     return this.modifiedBy;
-  }
-
-  public void setModifiedBy(String modifiedBy)
-  {
-    this.modifiedBy = modifiedBy;
   }
 
   public File modifiedBy(String modifiedBy)
@@ -327,14 +347,14 @@ public class File implements Serializable
     return this;
   }
 
+  public void setModifiedBy(String modifiedBy)
+  {
+    this.modifiedBy = modifiedBy;
+  }
+
   public Long getDataSize()
   {
     return this.dataSize;
-  }
-
-  public void setDataSize(Long dataSize)
-  {
-    this.dataSize = dataSize;
   }
 
   public File dataSize(Long dataSize)
@@ -343,20 +363,25 @@ public class File implements Serializable
     return this;
   }
 
+  public void setDataSize(Long dataSize)
+  {
+    this.dataSize = dataSize;
+  }
+
   public String getComment()
   {
     return this.comment;
-  }
-
-  public void setComment(String comment)
-  {
-    this.comment = comment;
   }
 
   public File comment(String comment)
   {
     this.comment = comment;
     return this;
+  }
+
+  public void setComment(String comment)
+  {
+    this.comment = comment;
   }
 
   // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
@@ -389,11 +414,12 @@ public class File implements Serializable
     return "File{" +
       "id=" + getId() +
       ", uuid='" + getUuid() + "'" +
-      ", fileData='" + getFileData() + "'" +
-      ", fileDataContentType='" + getFileDataContentType() + "'" +
+      ", pathFileOriginal='" + getPathFileOriginal() + "'" +
+      ", pathFileProcessed='" + getPathFileProcessed() + "'" +
       ", nameFile='" + getNameFile() + "'" +
       ", extension='" + getExtension() + "'" +
       ", typeFile='" + getTypeFile() + "'" +
+      ", processed='" + getProcessed() + "'" +
       ", searchField='" + getSearchField() + "'" +
       ", role='" + getRole() + "'" +
       ", createdDate='" + getCreatedDate() + "'" +

@@ -24,7 +24,11 @@
     {
       "fieldName": "role",
       "fieldType": "String",
-      "javadoc": "role"
+      "javadoc": "role",
+      "fieldValidateRules": [
+        "maxlength"
+      ],
+      "fieldValidateRulesMaxlength": "2048"
     },
     {
       "fieldName": "createdDate",

@@ -14,9 +14,10 @@ const ENV = 'production';
 module.exports = webpackMerge(commonConfig({env: ENV}), {
   // devtool: 'source-map', // Enable source maps. Please note that this will slow down the build
   mode: ENV,
-  entry: {
-    main: './src/main/webapp/app/index',
-  },
+  entry: [
+    './src/main/webapp/app/index',
+    "./build/openapi/src/main/typescript/open-api"
+  ],
   output: {
     path: utils.root('build/resources/main/static/'),
     filename: 'app/[name].[hash].bundle.js',

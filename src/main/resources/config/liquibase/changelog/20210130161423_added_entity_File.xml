@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <databaseChangeLog
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
 
   <!--
@@ -15,11 +15,11 @@
       <column name="uuid" type="${uuidType}" remarks="the uuid equivalent id (primary key)">
         <constraints nullable="false" unique="true" uniqueConstraintName="ux_file__uuid"/>
       </column>
-      <column name="file_data" type="longblob" remarks="fileData is data of video in binary form">
-        <constraints nullable="false"/>
+      <column name="path_file_original" type="varchar(255)" remarks="pathFileOriginal path of File (original)">
+        <constraints nullable="true"/>
       </column>
-      <column name="file_data_content_type" type="varchar(255)">
-        <constraints nullable="false"/>
+      <column name="path_file_processed" type="varchar(255)" remarks="pathFileProcessed path of File (processed)">
+        <constraints nullable="true"/>
       </column>
       <column name="name_file" type="varchar(1024)" remarks="name of file (Default is uuid + extension)">
         <constraints nullable="true"/>
@@ -30,10 +30,13 @@
       <column name="type_file" type="varchar(32)" remarks="typeFile">
         <constraints nullable="true"/>
       </column>
+      <column name="processed" type="boolean" remarks="file processed set value to true (default false)">
+        <constraints nullable="false"/>
+      </column>
       <column name="search_field" type="${clobType}" remarks="searchField">
         <constraints nullable="true"/>
       </column>
-      <column name="role" type="varchar(255)" remarks="role">
+      <column name="role" type="varchar(2048)" remarks="role">
         <constraints nullable="true"/>
       </column>
       <column name="created_date" type="${datetimeType}" remarks="createdDate">
@@ -77,11 +80,12 @@
       tableName="file">
       <column name="id" type="numeric"/>
       <column name="uuid" type="string"/>
-      <column name="file_data" type="blob"/>
-      <column name="file_data_content_type" type="string"/>
+      <column name="path_file_original" type="string"/>
+      <column name="path_file_processed" type="string"/>
       <column name="name_file" type="string"/>
       <column name="extension" type="string"/>
       <column name="type_file" type="string"/>
+      <column name="processed" type="boolean"/>
       <column name="search_field" type="clob"/>
       <column name="role" type="string"/>
       <column name="created_date" type="${datetimeType}"/>

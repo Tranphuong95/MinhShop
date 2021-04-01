@@ -16,7 +16,10 @@ module.exports = options =>
   webpackMerge(commonConfig({env: ENV}), {
     devtool: 'cheap-module-source-map', // https://reactjs.org/docs/cross-origin-errors.html
     mode: ENV,
-    entry: ['./src/main/webapp/app/index'],
+    entry: [
+      './src/main/webapp/app/index',
+      "./build/openapi/src/main/typescript/open-api"
+    ],
     output: {
       path: utils.root('build/resources/main/static/'),
       filename: 'app/[name].bundle.js',
@@ -48,14 +51,14 @@ module.exports = options =>
       proxy: [
         {
           context: ['/api', '/api/open', '/services', '/management', '/swagger-resources', '/v2/api-docs', '/v3/api-docs', '/h2-console', '/auth'],
-          target: `http${options.tls ? 's' : ''}://catiny.com:8080`,
+          target: `http${options.tls ? 's' : ''}://dev.catiny.com`,
           // target: `http${options.tls ? 's' : ''}://localhost:8080`,
           secure: false,
           changeOrigin: options.tls,
         },
         {
           context: ['/websocket'],
-          target: 'ws://catiny.com:8080',
+          target: 'ws://dev.catiny.com',
           // target: 'ws://127.0.0.1:8080',
           ws: true,
         },

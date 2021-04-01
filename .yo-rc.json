@@ -4,7 +4,7 @@
     "otherModules": [],
     "applicationType": "monolith",
     "baseName": "MinhShop",
-    "jhipsterVersion": "7.0.0-beta.1",
+    "jhipsterVersion": "7.0.0",
     "skipClient": false,
     "skipServer": false,
     "skipUserManagement": false,
@@ -70,8 +70,9 @@
       "Bill",
       "UserOtherInfo",
       "HanhChinhVN",
-      "Post"
+      "Post",
+      "Comment"
     ],
-    "lastLiquibaseTimestamp": 1612023267000
+    "lastLiquibaseTimestamp": 1617215933000
   }
 }

@@ -1,5 +1,6 @@
 package org.regitiny.minhshop.web.rest;
 
+import org.regitiny.minhshop.repository.FileRepository;
 import org.regitiny.minhshop.service.FileService;
 import org.regitiny.minhshop.service.dto.FileDTO;
 import org.regitiny.minhshop.web.rest.errors.BadRequestAlertException;
@@ -21,6 +22,7 @@ import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -36,10 +38,12 @@ public class FileResource
   private final FileService fileService;
   @Value("${jhipster.clientApp.name}")
   private String applicationName;
+  private final FileRepository fileRepository;
 
-  public FileResource(FileService fileService)
+  public FileResource(FileService fileService, FileRepository fileRepository)
   {
     this.fileService = fileService;
+    this.fileRepository = fileRepository;
   }
 
   /**
@@ -65,22 +69,29 @@ public class FileResource
   }
 
   /**
-   * {@code PUT  /files} : Updates an existing file.
+   * {@code PUT  /files/:id} : Updates an existing file.
    *
+   * @param id      the id of the fileDTO to save.
    * @param fileDTO the fileDTO to update.
    * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated fileDTO,
    * or with status {@code 400 (Bad Request)} if the fileDTO is not valid,
    * or with status {@code 500 (Internal Server Error)} if the fileDTO couldn't be updated.
    * @throws URISyntaxException if the Location URI syntax is incorrect.
    */
-  @PutMapping("/files")
-  public ResponseEntity<FileDTO> updateFile(@Valid @RequestBody FileDTO fileDTO) throws URISyntaxException
+  @PutMapping("/files/{id}")
+  public ResponseEntity<FileDTO> updateFile(
+    @PathVariable(value = "id", required = false) final Long id,
+    @Valid @RequestBody FileDTO fileDTO
+  ) throws URISyntaxException
   {
-    log.debug("REST request to update File : {}", fileDTO);
+    log.debug("REST request to update File : {}, {}", id, fileDTO);
     if (fileDTO.getId() == null)
-    {
       throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
-    }
+    if (!Objects.equals(id, fileDTO.getId()))
+      throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
+    if (!fileRepository.existsById(id))
+      throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+
     FileDTO result = fileService.save(fileDTO);
     return ResponseEntity
       .ok()
@@ -89,8 +100,9 @@ public class FileResource
   }
 
   /**
-   * {@code PATCH  /files} : Updates given fields of an existing file.
+   * {@code PATCH  /files/:id} : Partial updates given fields of an existing file, field will ignore if it is null
    *
+   * @param id      the id of the fileDTO to save.
    * @param fileDTO the fileDTO to update.
    * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated fileDTO,
    * or with status {@code 400 (Bad Request)} if the fileDTO is not valid,
@@ -98,14 +110,20 @@ public class FileResource
    * or with status {@code 500 (Internal Server Error)} if the fileDTO couldn't be updated.
    * @throws URISyntaxException if the Location URI syntax is incorrect.
    */
-  @PatchMapping(value = "/files", consumes = "application/merge-patch+json")
-  public ResponseEntity<FileDTO> partialUpdateFile(@NotNull @RequestBody FileDTO fileDTO) throws URISyntaxException
+  @PatchMapping(value = "/files/{id}", consumes = "application/merge-patch+json")
+  public ResponseEntity<FileDTO> partialUpdateFile(
+    @PathVariable(value = "id", required = false) final Long id,
+    @NotNull @RequestBody FileDTO fileDTO
+  ) throws URISyntaxException
   {
-    log.debug("REST request to update File partially : {}", fileDTO);
+    log.debug("REST request to partial update File partially : {}, {}", id, fileDTO);
     if (fileDTO.getId() == null)
-    {
       throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
-    }
+    if (!Objects.equals(id, fileDTO.getId()))
+      throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
+
+    if (!fileRepository.existsById(id))
+      throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
 
     Optional<FileDTO> result = fileService.partialUpdate(fileDTO);
 

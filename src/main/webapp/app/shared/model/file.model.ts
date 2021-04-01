@@ -2,11 +2,12 @@ export interface IFile
 {
   id?: number;
   uuid?: string;
-  fileDataContentType?: string;
-  fileData?: string;
+  pathFileOriginal?: string | null;
+  pathFileProcessed?: string | null;
   nameFile?: string | null;
   extension?: string | null;
   typeFile?: string | null;
+  processed?: boolean;
   searchField?: string | null;
   role?: string | null;
   createdDate?: string | null;
@@ -17,4 +18,6 @@ export interface IFile
   comment?: string | null;
 }
 
-export const defaultValue: Readonly<IFile> = {};
+export const defaultValue: Readonly<IFile> = {
+  processed: false,
+};

@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import {Link, RouteComponentProps} from 'react-router-dom';
 import {Button, Col, Label, Row, UncontrolledTooltip} from 'reactstrap';
 import {AvField, AvForm, AvGroup, AvInput} from 'availity-reactstrap-validation';
-import {byteSize, openFile, setFileData, Translate, translate} from 'react-jhipster';
+import {setFileData, Translate, translate} from 'react-jhipster';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {IRootState} from 'app/shared/reducers';
 
@@ -20,7 +20,7 @@ export const FileUpdate = (props: IFileUpdateProps) =>
 
   const {fileEntity, loading, updating} = props;
 
-  const {fileData, fileDataContentType, searchField} = fileEntity;
+  const {searchField} = fileEntity;
 
   const handleClose = () =>
   {
@@ -117,46 +117,21 @@ export const FileUpdate = (props: IFileUpdateProps) =>
                 </UncontrolledTooltip>
               </AvGroup>
               <AvGroup>
-                <AvGroup>
-                  <Label id="fileDataLabel" for="fileData">
-                    <Translate contentKey="minhShopApp.file.fileData">File Data</Translate>
-                  </Label>
-                  <br/>
-                  {fileData ? (
-                    <div>
-                      {fileDataContentType ? (
-                        <a onClick={openFile(fileDataContentType, fileData)}>
-                          <Translate contentKey="entity.action.open">Open</Translate>
-                        </a>
-                      ) : null}
-                      <br/>
-                      <Row>
-                        <Col md="11">
-                          <span>
-                            {fileDataContentType}, {byteSize(fileData)}
-                          </span>
-                        </Col>
-                        <Col md="1">
-                          <Button color="danger" onClick={clearBlob('fileData')}>
-                            <FontAwesomeIcon icon="times-circle"/>
-                          </Button>
-                        </Col>
-                      </Row>
-                    </div>
-                  ) : null}
-                  <input id="file_fileData" data-cy="fileData" type="file" onChange={onBlobChange(false, 'fileData')}/>
-                  <AvInput
-                    type="hidden"
-                    name="fileData"
-                    value={fileData}
-                    validate={{
-                      required: {value: true, errorMessage: translate('entity.validation.required')},
-                    }}
-                  />
-                </AvGroup>
-
-                <UncontrolledTooltip target="fileDataLabel">
-                  <Translate contentKey="minhShopApp.file.help.fileData"/>
+                <Label id="pathFileOriginalLabel" for="file-pathFileOriginal">
+                  <Translate contentKey="minhShopApp.file.pathFileOriginal">Path File Original</Translate>
+                </Label>
+                <AvField id="file-pathFileOriginal" data-cy="pathFileOriginal" type="text" name="pathFileOriginal"/>
+                <UncontrolledTooltip target="pathFileOriginalLabel">
+                  <Translate contentKey="minhShopApp.file.help.pathFileOriginal"/>
+                </UncontrolledTooltip>
+              </AvGroup>
+              <AvGroup>
+                <Label id="pathFileProcessedLabel" for="file-pathFileProcessed">
+                  <Translate contentKey="minhShopApp.file.pathFileProcessed">Path File Processed</Translate>
+                </Label>
+                <AvField id="file-pathFileProcessed" data-cy="pathFileProcessed" type="text" name="pathFileProcessed"/>
+                <UncontrolledTooltip target="pathFileProcessedLabel">
+                  <Translate contentKey="minhShopApp.file.help.pathFileProcessed"/>
                 </UncontrolledTooltip>
               </AvGroup>
               <AvGroup>
@@ -210,6 +185,15 @@ export const FileUpdate = (props: IFileUpdateProps) =>
                   <Translate contentKey="minhShopApp.file.help.typeFile"/>
                 </UncontrolledTooltip>
               </AvGroup>
+              <AvGroup check>
+                <Label id="processedLabel">
+                  <AvInput id="file-processed" data-cy="processed" type="checkbox" className="form-check-input" name="processed"/>
+                  <Translate contentKey="minhShopApp.file.processed">Processed</Translate>
+                </Label>
+                <UncontrolledTooltip target="processedLabel">
+                  <Translate contentKey="minhShopApp.file.help.processed"/>
+                </UncontrolledTooltip>
+              </AvGroup>
               <AvGroup>
                 <Label id="searchFieldLabel" for="file-searchField">
                   <Translate contentKey="minhShopApp.file.searchField">Search Field</Translate>
@@ -223,7 +207,15 @@ export const FileUpdate = (props: IFileUpdateProps) =>
                 <Label id="roleLabel" for="file-role">
                   <Translate contentKey="minhShopApp.file.role">Role</Translate>
                 </Label>
-                <AvField id="file-role" data-cy="role" type="text" name="role"/>
+                <AvField
+                  id="file-role"
+                  data-cy="role"
+                  type="text"
+                  name="role"
+                  validate={{
+                    maxLength: {value: 2048, errorMessage: translate('entity.validation.maxlength', {max: 2048})},
+                  }}
+                />
                 <UncontrolledTooltip target="roleLabel">
                   <Translate contentKey="minhShopApp.file.help.role"/>
                 </UncontrolledTooltip>

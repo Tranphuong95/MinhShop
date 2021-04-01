@@ -13,6 +13,7 @@ import {ITEMS_PER_PAGE} from 'app/shared/util/pagination.constants';
 import {overridePaginationStateWithQueryParams} from 'app/shared/util/entity-utils';
 
 import {getEntities as getTypePostFilters} from 'app/entities/type-post-filter/type-post-filter.reducer';
+import {FileApi} from "open-api/index";
 
 export interface ISimplePostProps extends StateProps, DispatchProps, RouteComponentProps<{ url: string }>
 {
@@ -57,6 +58,14 @@ export const VisibleSearch = (props: ISimplePostProps) =>
   };
   useEffect(() =>
   {
+    window.console.log("sdfdfdsfsd")
+
+    const a: FileApi = new FileApi();
+
+
+    a.getFileDataByName("3213232312").then(res => window.console.log(res));
+
+    window.console.log("sdfdfdsfsd")
     props.getTypePostFilters();
   }, []);
   const resetAll = () =>

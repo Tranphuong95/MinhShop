@@ -4,7 +4,7 @@ import {connect} from 'react-redux';
 import {Link, RouteComponentProps} from 'react-router-dom';
 import {Button, Col, InputGroup, Row, Table} from 'reactstrap';
 import {AvForm, AvGroup, AvInput} from 'availity-reactstrap-validation';
-import {byteSize, getSortState, openFile, TextFormat, Translate, translate,} from 'react-jhipster';
+import {getSortState, TextFormat, Translate, translate} from 'react-jhipster';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
 import {IRootState} from 'app/shared/reducers';
@@ -192,13 +192,17 @@ export const File = (props: IFileProps) =>
               <thead>
               <tr>
                 <th className="hand" onClick={sort('id')}>
-                  <Translate contentKey="global.field.id">ID</Translate> <FontAwesomeIcon icon="sort"/>
+                  <Translate contentKey="minhShopApp.file.id">ID</Translate> <FontAwesomeIcon icon="sort"/>
                 </th>
                 <th className="hand" onClick={sort('uuid')}>
                   <Translate contentKey="minhShopApp.file.uuid">Uuid</Translate> <FontAwesomeIcon icon="sort"/>
                 </th>
-                <th className="hand" onClick={sort('fileData')}>
-                  <Translate contentKey="minhShopApp.file.fileData">File Data</Translate> <FontAwesomeIcon icon="sort"/>
+                <th className="hand" onClick={sort('pathFileOriginal')}>
+                  <Translate contentKey="minhShopApp.file.pathFileOriginal">Path File Original</Translate> <FontAwesomeIcon icon="sort"/>
+                </th>
+                <th className="hand" onClick={sort('pathFileProcessed')}>
+                  <Translate contentKey="minhShopApp.file.pathFileProcessed">Path File Processed</Translate>{' '}
+                  <FontAwesomeIcon icon="sort"/>
                 </th>
                 <th className="hand" onClick={sort('nameFile')}>
                   <Translate contentKey="minhShopApp.file.nameFile">Name File</Translate> <FontAwesomeIcon icon="sort"/>
@@ -208,6 +212,9 @@ export const File = (props: IFileProps) =>
                 </th>
                 <th className="hand" onClick={sort('typeFile')}>
                   <Translate contentKey="minhShopApp.file.typeFile">Type File</Translate> <FontAwesomeIcon icon="sort"/>
+                </th>
+                <th className="hand" onClick={sort('processed')}>
+                  <Translate contentKey="minhShopApp.file.processed">Processed</Translate> <FontAwesomeIcon icon="sort"/>
                 </th>
                 <th className="hand" onClick={sort('searchField')}>
                   <Translate contentKey="minhShopApp.file.searchField">Search Field</Translate> <FontAwesomeIcon icon="sort"/>
@@ -244,25 +251,14 @@ export const File = (props: IFileProps) =>
                       {file.id}
                     </Button>
                   </td>
+                  <td>{file.id}</td>
                   <td>{file.uuid}</td>
-                  <td>
-                    {file.fileData ? (
-                      <div>
-                        {file.fileDataContentType ? (
-                          <a onClick={openFile(file.fileDataContentType, file.fileData)}>
-                            <Translate contentKey="entity.action.open">Open</Translate>
-                            &nbsp;
-                          </a>
-                        ) : null}
-                        <span>
-                          {file.fileDataContentType}, {byteSize(file.fileData)}
-                        </span>
-                      </div>
-                    ) : null}
-                  </td>
+                  <td>{file.pathFileOriginal}</td>
+                  <td>{file.pathFileProcessed}</td>
                   <td>{file.nameFile}</td>
                   <td>{file.extension}</td>
                   <td>{file.typeFile}</td>
+                  <td>{file.processed ? 'true' : 'false'}</td>
                   <td>{file.searchField}</td>
                   <td>{file.role}</td>
                   <td>{file.createdDate ? <TextFormat type="date" value={file.createdDate} format={APP_DATE_FORMAT}/> : null}</td>

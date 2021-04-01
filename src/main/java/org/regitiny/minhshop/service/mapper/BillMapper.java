@@ -1,16 +1,13 @@
 package org.regitiny.minhshop.service.mapper;
 
-import org.mapstruct.BeanMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Named;
+import org.mapstruct.*;
 import org.regitiny.minhshop.domain.Bill;
 import org.regitiny.minhshop.service.dto.BillDTO;
 
 /**
  * Mapper for the entity {@link Bill} and its DTO {@link BillDTO}.
  */
-@Mapper(componentModel = "spring", uses = {UserOtherInfoMapper.class})
+@Mapper(componentModel = "spring", uses = {UserOtherInfoMapper.class}, unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface BillMapper extends EntityMapper<BillDTO, Bill>
 {
   @Mapping(target = "userOtherInfo", source = "userOtherInfo", qualifiedByName = "id")

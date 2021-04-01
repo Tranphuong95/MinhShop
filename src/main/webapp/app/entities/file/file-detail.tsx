@@ -2,7 +2,7 @@ import React, {useEffect} from 'react';
 import {connect} from 'react-redux';
 import {Link, RouteComponentProps} from 'react-router-dom';
 import {Button, Col, Row, UncontrolledTooltip} from 'reactstrap';
-import {byteSize, openFile, TextFormat, Translate} from 'react-jhipster';
+import {TextFormat, Translate} from 'react-jhipster';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
 import {IRootState} from 'app/shared/reducers';
@@ -25,9 +25,15 @@ export const FileDetail = (props: IFileDetailProps) =>
     <Row>
       <Col md="8">
         <h2 data-cy="fileDetailsHeading">
-          <Translate contentKey="minhShopApp.file.detail.title">File</Translate> [<strong>{fileEntity.id}</strong>]
+          <Translate contentKey="minhShopApp.file.detail.title">File</Translate>
         </h2>
         <dl className="jh-entity-details">
+          <dt>
+            <span id="id">
+              <Translate contentKey="global.field.id">ID</Translate>
+            </span>
+          </dt>
+          <dd>{fileEntity.id}</dd>
           <dt>
             <span id="uuid">
               <Translate contentKey="minhShopApp.file.uuid">Uuid</Translate>
@@ -38,27 +44,23 @@ export const FileDetail = (props: IFileDetailProps) =>
           </dt>
           <dd>{fileEntity.uuid}</dd>
           <dt>
-            <span id="fileData">
-              <Translate contentKey="minhShopApp.file.fileData">File Data</Translate>
+            <span id="pathFileOriginal">
+              <Translate contentKey="minhShopApp.file.pathFileOriginal">Path File Original</Translate>
             </span>
-            <UncontrolledTooltip target="fileData">
-              <Translate contentKey="minhShopApp.file.help.fileData"/>
+            <UncontrolledTooltip target="pathFileOriginal">
+              <Translate contentKey="minhShopApp.file.help.pathFileOriginal"/>
             </UncontrolledTooltip>
           </dt>
-          <dd>
-            {fileEntity.fileData ? (
-              <div>
-                {fileEntity.fileDataContentType ? (
-                  <a onClick={openFile(fileEntity.fileDataContentType, fileEntity.fileData)}>
-                    <Translate contentKey="entity.action.open">Open</Translate>&nbsp;
-                  </a>
-                ) : null}
-                <span>
-                  {fileEntity.fileDataContentType}, {byteSize(fileEntity.fileData)}
-                </span>
-              </div>
-            ) : null}
-          </dd>
+          <dd>{fileEntity.pathFileOriginal}</dd>
+          <dt>
+            <span id="pathFileProcessed">
+              <Translate contentKey="minhShopApp.file.pathFileProcessed">Path File Processed</Translate>
+            </span>
+            <UncontrolledTooltip target="pathFileProcessed">
+              <Translate contentKey="minhShopApp.file.help.pathFileProcessed"/>
+            </UncontrolledTooltip>
+          </dt>
+          <dd>{fileEntity.pathFileProcessed}</dd>
           <dt>
             <span id="nameFile">
               <Translate contentKey="minhShopApp.file.nameFile">Name File</Translate>
@@ -86,6 +88,15 @@ export const FileDetail = (props: IFileDetailProps) =>
             </UncontrolledTooltip>
           </dt>
           <dd>{fileEntity.typeFile}</dd>
+          <dt>
+            <span id="processed">
+              <Translate contentKey="minhShopApp.file.processed">Processed</Translate>
+            </span>
+            <UncontrolledTooltip target="processed">
+              <Translate contentKey="minhShopApp.file.help.processed"/>
+            </UncontrolledTooltip>
+          </dt>
+          <dd>{fileEntity.processed ? 'true' : 'false'}</dd>
           <dt>
             <span id="searchField">
               <Translate contentKey="minhShopApp.file.searchField">Search Field</Translate>
