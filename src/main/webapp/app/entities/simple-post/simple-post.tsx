@@ -33,7 +33,6 @@ import {overridePaginationStateWithQueryParams} from 'app/shared/util/entity-uti
 // import { getEntities as getTypePostFilters } from 'app/entities/type-post-filter/type-post-filter.reducer';
 import {getEntities as getTypePosts} from 'app/entities/type-post/type-post.reducer';
 import {getEntities as getPostDetails} from 'app/entities/post-details/post-details.reducer';
-import _ from 'lodash';
 
 export interface ISimplePostProps extends StateProps, DispatchProps, RouteComponentProps<{ url: string }>
 {
@@ -47,7 +46,7 @@ export const SimplePost = (props: ISimplePostProps) =>
 
   const [search, setSearch] = useState('');
   const [paginationState, setPaginationState] = useState(
-    overridePaginationStateWithQueryParams(getSortState(props.location, ITEMS_PER_PAGE, 'id'), props.location.search)
+    overridePaginationStateWithQueryParams(getSortState(props.location, ITEMS_PER_PAGE), props.location.search)
   );
 
   window.console.log(paginationState);
@@ -73,7 +72,7 @@ export const SimplePost = (props: ISimplePostProps) =>
       props.getEntities(paginationState.activePage - 1, paginationState.itemsPerPage, `${paginationState.sort},${paginationState.order}`);
     }
   };
-
+  
   useEffect(() =>
   {
     props.getTypePosts();
@@ -208,31 +207,26 @@ export const SimplePost = (props: ISimplePostProps) =>
     props.getSortTypePostEntities(`typePost.id:${id}`, paginationState.activePage - 1, paginationState.itemsPerPage);
   };
   window.console.log(postDetails)
-  const showImages = (id) =>
-  {
-    let result = null;
-    if (postDetails && postDetails.length > 0)
-    {
-      postDetails.map(item =>
-      {
-        if (item.id === id)
-        {
-          if (item.otherData)
-          {
-            const urls: any = item.otherData;
-            const images = _.attempt(() => JSON.parse(urls));
-            if (images && images.length > 0)
-            {
-              result = images.map(image =>
-              {
-                return (
+  const showImages=(id)=>{
+    let result=null;
+    if(postDetails && postDetails.length>0){
+      postDetails.map(item=>{
+        if(item.id===id){
+          if(item.otherData){
+            const urls:any= item.otherData;
+            const images=JSON.parse(urls);
+            if(images && images.length>0){
+              result=images.map(image=>{
+                return(
                   <img key={image.id} width="100%" src={image.link} alt="Card image cap"/>
                 )
               })
+
             }
           }
         }
       })
+
     }
     return result
   }

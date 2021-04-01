@@ -5,7 +5,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faListAlt} from '@fortawesome/free-solid-svg-icons';
 import {NavLink, withRouter} from 'react-router-dom';
 import {WarpCart} from 'app/shared/layout/visible/visible-component';
-import VisibleSearch from 'app/shared/layout/visible';
+import VisibleSearch from 'app/shared/layout/visible/visibleSearch';
 
 export function useComponentVisible(initialIsVisible)
 {

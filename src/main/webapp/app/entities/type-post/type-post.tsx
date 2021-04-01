@@ -20,6 +20,7 @@ export interface ITypePostProps extends StateProps, DispatchProps, RouteComponen
 export const TypePost = (props: ITypePostProps) =>
 {
   const [search, setSearch] = useState('');
+
   const [paginationState, setPaginationState] = useState(
     overridePaginationStateWithQueryParams(getSortState(props.location, ITEMS_PER_PAGE, 'id'), props.location.search)
   );
@@ -55,6 +56,14 @@ export const TypePost = (props: ITypePostProps) =>
   useEffect(() =>
   {
     resetAll();
+
+    // // test thử bên dưới
+    // props.reset();
+    // setPaginationState({
+    //   ...paginationState,
+    //   activePage: 1,
+    // });
+
   }, []);
 
   const startSearching = () =>
@@ -139,6 +148,9 @@ export const TypePost = (props: ITypePostProps) =>
   };
 
   const {typePostList, match, loading} = props;
+  window.console.log('nextPage',props.links.next)
+  window.console.log('page', paginationState.activePage-1)
+  window.console.log(typePostList)
   return (
     <div>
       <h2 id="type-post-heading" data-cy="TypePostHeading">

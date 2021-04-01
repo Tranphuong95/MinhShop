@@ -198,6 +198,7 @@ const Laptop = (props: ISimplePostProps) =>
   }, [multiProduct])
 
   window.console.log('multiProduct', multiProduct)
+  window.console.log('size-window', window.innerWidth)
   return (
     <div>
       <div className="header-banner d-flex justify-content-center">

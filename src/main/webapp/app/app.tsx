@@ -37,6 +37,8 @@ export const App = (props: IAppProps) =>
     props.getProfile();
   }, []);
   const paddingTop = '60px';
+  const {account}=props;
+  window.console.log(account)
   return (
     <Router basename={baseHref}>
       <div className="app-container" style={{paddingTop}}>
@@ -69,6 +71,7 @@ export const App = (props: IAppProps) =>
 };
 
 const mapStateToProps = ({authentication, applicationProfile, locale}: IRootState) => ({
+  account: authentication.account,
   currentLocale: locale.currentLocale,
   isAuthenticated: authentication.isAuthenticated,
   isAdmin: hasAnyAuthority(authentication.account.authorities, [AUTHORITIES.ADMIN]),

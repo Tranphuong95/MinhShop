@@ -146,7 +146,7 @@ export const VisibleSearch = (props: ISimplePostProps) =>
   if (getSuccess === true) return <Redirect to="/result-search"/>;
   return (
     <div className=" d-flex justify-content-center col-12 col-sm-11 -col-md-10 col-lg-9 col-xl-8">
-      <div className="col-12">
+      <div className="col-12" style={{margin: 'auto'}}>
         <AvForm onSubmit={startSearching}>
           <AvGroup className="search-elastic">
             <InputGroup>
