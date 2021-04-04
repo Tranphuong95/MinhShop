@@ -37,7 +37,7 @@ const Tablet = (props: ISimplePostProps) =>
       params: {page: paginationState.activePage - 1, size: paginationState.itemsPerPage, typePost_id: '1453'},
     }).then(res => setTablets(res.data));
   }, []);
-  window.console.log(tablets);
+
 
   useEffect(() =>
   {

@@ -160,7 +160,7 @@ export const MayConsoleDetail = props =>
           </div>
         </div>
         <div className="product-description mt-3 col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6">
-          <h5>SẢN PHẨM ĐỒ GỖ 1</h5>
+          <h2>{console?console.title:''}</h2>
           <hr/>
           <table className="col-12">
             <tbody>

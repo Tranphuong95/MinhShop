@@ -13,11 +13,11 @@ const CartContent = props =>
 {
   const {cartItems} = props;
   const {page_path} = props;
-  window.console.log(page_path);
+
 
   const onUpdateInCart = (product, quantity) =>
   {
-    window.console.log(quantity);
+
     if (quantity > 0)
     {
       props.updateInCart(product, quantity);

@@ -134,7 +134,6 @@ function Introduce({children})
       if (slides && slides.length > 0)
       {
         slides[count - 1].style.display = "block";
-        window.console.log(slides[0])
       }
       if (dots && dots.length > 0)
       {
@@ -153,8 +152,7 @@ function Introduce({children})
   {
     currentSlide(count);
   });
-  window.console.log(count)
-  window.console.log(counter)
+
   return (
     <div className="show-light-box">
       <BreadcrumbsItem glyph="calendar" to="/introduce">

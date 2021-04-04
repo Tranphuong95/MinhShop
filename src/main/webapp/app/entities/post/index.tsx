@@ -10,7 +10,7 @@ import PostDeleteDialog from './post-delete-dialog';
 
 const Routes = ({match}) =>
 {
-  window.console.log(match);
+
   return (
     <>
       <Switch>

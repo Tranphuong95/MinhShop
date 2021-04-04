@@ -26,7 +26,7 @@ export function useComponentVisible(initialIsVisible)
     {
       setIsComponentVisible(false);
     }
-    window.console.log(ref.current.contains(event.target));
+
   };
 
   useEffect(() =>

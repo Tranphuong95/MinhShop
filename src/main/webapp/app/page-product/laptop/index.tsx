@@ -7,7 +7,7 @@ import LaptopDetail from "app/page-product/laptop/laptop-detail";
 
 function Routes({match})
 {
-  window.console.log(match.url);
+
   return (
     <div>
       <BreadcrumbsItem glyph="cog" to={match.url}>

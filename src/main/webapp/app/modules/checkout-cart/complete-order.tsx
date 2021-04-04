@@ -15,7 +15,7 @@ const CompleteOrder = props =>
   //     return parts.pop().split(';').shift();
   //   }
   // }
-  window.console.log('hello1', '1');
+
 
   function readCookie(name)
   {
@@ -42,8 +42,6 @@ const CompleteOrder = props =>
   {
     setCartInformation(_cartInformation);
   }, []);
-
-  window.console.log('cartInformation', cartInformation);
 
   const Products = cartInformation ? cartInformation.product : null;
 

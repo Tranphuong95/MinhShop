@@ -22,11 +22,11 @@ const Home = props =>
   useEffect(() =>
   {
     const typePost_id = [
-      {id: 1453, f: setTablets},
+      {id: 1050, f: setTablets},
       {id: 1051, f: setLaptops},
-      {id: 1452, f: setConsoles},
-      {id: 1052, f: setMacbooks},
-      {id: 1451, f: setGameEquipments}];
+      {id: 1052, f: setConsoles},
+      {id: 51001, f: setMacbooks},
+      {id: 1054, f: setGameEquipments}];
     typePost_id.map(value =>
     {
       axios({

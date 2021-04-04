@@ -19,7 +19,7 @@ import Post from './post';
 
 const Routes = ({match}) =>
 {
-  window.console.log(`${match.url}post`);
+
   return (
     <div>
       <Switch>

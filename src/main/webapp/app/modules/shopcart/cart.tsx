@@ -18,7 +18,7 @@ export const Cart = props =>
   const [quantity, setQuantity] = useState(1);
 
   const {page_path} = props;
-  window.console.log(page_path);
+
   useEffect(() =>
   {
     if (quantity >= 100)
@@ -57,12 +57,9 @@ export const Cart = props =>
 
   const {cartProductDetail} = props;
 
-  window.console.log(props);
+
   cartProductDetail.url = page_path;  //add url to cart
 
-  window.console.log(cartProductDetail);
-  // window.console.log(productShops.products)
-  window.console.log(cartItems);
   const onAddToCart = () =>
   {
     toggle();

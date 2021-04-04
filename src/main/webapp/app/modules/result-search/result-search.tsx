@@ -7,7 +7,8 @@ import {Link} from 'react-router-dom';
 const ResultSearch = props =>
 {
   const {simplePostList} = props;
-  window.console.log(props.simplePostList);
+  window.console.log(simplePostList)
+
   return (
     <div className="d-flex justify-content-center">
       <div className="d-flex row col-12 col-sm-11 -col-md-10 col-lg-10 col-xl-9">
@@ -15,9 +16,11 @@ const ResultSearch = props =>
           simplePostList.map(product =>
           {
             // if (product.typePost.typeName === 'product') {}
+            const typePostProduct=product.typePost;
+            window.console.log(typePostProduct?typePostProduct.id:'hello')
             return (
               <div className="col-4" key={product.uuid + product.id}>
-                <Link to={`/${product.id}`}>
+                <Link to={`page/${typePostProduct?(typePostProduct.id===1051?'lap-top':typePostProduct.id===1052?'may-console':typePostProduct.id===51001?'macbook':'tablets'):''}/${product.id}`}>
                   {/*<Link to={`${match.url}/${product.id}`}>*/}
                   <Card className="p-1 p-sm-1 p-lg-0 ">
                     <CardHeader className="px-1 px-md-1 p-lg-2">

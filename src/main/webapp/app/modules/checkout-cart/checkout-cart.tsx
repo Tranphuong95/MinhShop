@@ -22,7 +22,6 @@ const CheckoutCart = props =>
     setCartItems(JSON.parse(cart));
   }, [cart]);
   // const CartItems = JSON.parse(localStorage.getItem("cartItems"));
-  window.console.log(CartItems);
   const totalPrice = () =>
   {
     let total = 0;
@@ -134,10 +133,10 @@ const CheckoutCart = props =>
       provinceName: provinceNames,
     });
   };
-  window.console.log(provinceNames);
+
   const FindProvinceId = event =>
   {
-    window.console.log(event.target.value);
+
     axios({
       method: 'post',
       url: ' https://online-gateway.ghn.vn/shiip/public-api/master-data/district',
@@ -153,8 +152,7 @@ const CheckoutCart = props =>
     showProvinceName(event);
   };
 
-  window.console.log(location.pathname);
-  window.console.log(testsTenQuan);
+
   //todo tao cookie
   const setCookie = (cname, cvalue, exdays) =>
   {
@@ -208,8 +206,6 @@ const CheckoutCart = props =>
     }
   };
 
-  window.console.log(informationProducts);
-  window.console.log(statusApi);
   if (statusApi === 'Created')
   {
     return <Redirect to="/hoantatgiaohang"/>;

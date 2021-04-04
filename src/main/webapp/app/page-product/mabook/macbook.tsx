@@ -36,7 +36,7 @@ const MacBook = (props: ISimplePostProps) =>
       params: {page: paginationState.activePage - 1, size: paginationState.itemsPerPage, typePost_id: '1052'},
     }).then(res => setmacbooks(res.data));
   }, []);
-  window.console.log(macbooks);
+
   useEffect(() =>
   {
     axios({

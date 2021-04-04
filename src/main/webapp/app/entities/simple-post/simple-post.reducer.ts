@@ -176,10 +176,10 @@ export const getSortTypePostEntities: ICrudSearchAction<ISimplePost> = (query, p
   type: ACTION_TYPES.SORT_SIMPLEPOST,
   payload: axios.get<ISimplePost>(`${apiSearchUrl}?query=${query}${sort ? `&page=${page}&size=${size}&sort=${sort}` : ''}`),
 });
-export const getSearchVisibleEntities: ICrudSearchAction<ISimplePost> = (query, page, size, sort) => ({
+export const getSearchVisibleEntities: ICrudSearchAction<ISimplePost> = (query) => ({
   //todo add 23/2
   type: ACTION_TYPES.SEARCH_VISIBLE,
-  payload: axios.get<ISimplePost>(`${apiSearchUrl}?query=${query}${sort ? `&page=${page}&size=${size}&sort=${sort}` : ''}`),
+  payload: axios.get<ISimplePost>(`${apiSearchUrl}?query=${query}`),
 });
 
 export const getEntities: ICrudGetAllAction<ISimplePost> = (page, size, sort) =>

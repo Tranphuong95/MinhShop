@@ -34,7 +34,6 @@ export  const Comment=(props)=>{
   },[comment])
 
   const onOpenModalComment=()=>{
-    window.console.log(comment)
     if(comment.comment.length>=3) return commentModal.style.display='block';
     else alert('Bạn phải nhập tối đa 3 ký tự')
   }
@@ -42,7 +41,7 @@ export  const Comment=(props)=>{
     commentModal.style.display='none'
   }
   const onReply=(id)=>{
-    window.console.log(id)
+
     // setStatusReply(!statusReply?id:null)
     setStatusReply(statusReply===id?null:id)
     setIdReply(id);
@@ -89,9 +88,9 @@ export  const Comment=(props)=>{
       return item.reply === null;
     });
   }
-  const showComment=( comments,parent)=>{
-    window.console.log(parent?parent.children:[])
-    window.console.log(comments)
+
+  const granChildComment=(comments, parent)=>{
+
     let items=null;
     items=comments.map(item=>{
       const times=new Date(item.time)
@@ -115,7 +114,70 @@ export  const Comment=(props)=>{
             </div>
             <div className="mt-2" style={{paddingLeft: '82px'}}>{statusReply===item.id?formComment():null}</div>
           </div>
-          <div className="area-reply ml-5">{showComment(item.children, item)}</div>
+          <div className="area-reply ">{granChildComment(item.children, item)}</div>
+        </div>
+      )
+    })
+    return items
+  }
+
+  const childComment=(comments, parent)=>{
+
+    let items=null;
+    items=comments.map(item=>{
+      const times=new Date(item.time)
+      const nameAvatar=item.name.split(' ').map(x=>x[0].toUpperCase())
+      window.console.log(times)
+      return(
+        <div key={item.id}>
+          <div className="area-comment">
+            <div className="d-flex comment mt-3">
+              <div className="avatar-commentber text-white"><strong>{nameAvatar}</strong></div>
+              <div className="comment-content ml-2">
+                <div className="d-flex">
+                  <div className="mr-3"><strong>{item.name}</strong><strong className={item.admin?"avatar-admin bg-danger ml-1":"avatar-use"}>Quản trị viên</strong></div>
+                  <div className="text-secondary">{`${times.toLocaleTimeString()} ${times.toLocaleDateString()}`}</div>
+                </div>
+                <div>
+                  <span>{parent?`@${parent.name}: `:''}</span>
+                  {item.comment}</div>
+                <div className="reply text-primary"><span onClick={()=>onReply(item.id)}>Trả lời</span></div>
+              </div>
+            </div>
+            <div className="mt-2" style={{paddingLeft: '82px'}}>{statusReply===item.id?formComment():null}</div>
+          </div>
+          <div className="area-reply ml-5">{granChildComment(item.children, item)}</div>
+        </div>
+      )
+    })
+    return items
+  }
+
+  const showComment=( comments)=>{
+    let items=null;
+    items=comments.map(item=>{
+      const times=new Date(item.time)
+      const nameAvatar=item.name.split(' ').map(x=>x[0].toUpperCase())
+      window.console.log(times)
+      return(
+        <div key={item.id}>
+          <div className="area-comment">
+            <div className="d-flex comment mt-3">
+              <div className="avatar-commentber text-white"><strong>{nameAvatar}</strong></div>
+              <div className="comment-content ml-2">
+                <div className="d-flex">
+                  <div className="mr-3"><strong>{item.name}</strong><strong className={item.admin?"avatar-admin bg-danger ml-1":"avatar-use"}>Quản trị viên</strong></div>
+                  <div className="text-secondary">{`${times.toLocaleTimeString()} ${times.toLocaleDateString()}`}</div>
+                </div>
+                <div>
+                  {/*<span>{parent?`@${parent.name}: `:''}</span>*/}
+                  {item.comment}</div>
+                <div className="reply text-primary"><span onClick={()=>onReply(item.id)}>Trả lời</span></div>
+              </div>
+            </div>
+            <div className="mt-2" style={{paddingLeft: '82px'}}>{statusReply===item.id?formComment():null}</div>
+          </div>
+          <div className="area-reply ml-5">{childComment(item.children, item)}</div>
         </div>
       )
     })
@@ -172,7 +234,7 @@ export  const Comment=(props)=>{
         <h2 className="text-dark"><strong>Nhận xét ({dataComment?dataComment.length:0})</strong></h2>
         {formComment()}
         <div>
-          {showComment(nestedComment(), false)}
+          {showComment(nestedComment())}
         </div>
       </div>
     </div>

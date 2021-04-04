@@ -14,7 +14,7 @@ export const MacbookDetail = props =>
   const authToken = `Bearer ${Token}`;
   const [productView, setProductView] = useState(null);
   const urlPage = props.location.pathname
-  window.console.log(props.match);
+
   useEffect(() =>
   {
     axios({
@@ -57,7 +57,6 @@ export const MacbookDetail = props =>
   {
     currentSlide(count);
   });
-  window.console.log(macbook);
   useEffect(() =>
   {
     if (macbook)

@@ -15,7 +15,7 @@ import {overridePaginationStateWithQueryParams} from 'app/shared/util/entity-uti
 import {getEntities as getTypePostFilters} from 'app/entities/type-post-filter/type-post-filter.reducer';
 import {FileApi} from "open-api/index";
 
-export interface ISimplePostProps extends StateProps, DispatchProps, RouteComponentProps<{ url: string }>
+export interface ISimplePostProps extends StateProps, DispatchProps
 {
 }
 
@@ -27,54 +27,46 @@ export const VisibleSearch = (props: ISimplePostProps) =>
 
   const [search, setSearch] = useState('');
   const [statusGetSuccess, setStatusGetSuccess] = useState(false);
-  const [paginationState, setPaginationState] = useState(
-    overridePaginationStateWithQueryParams(getSortState(props.location, ITEMS_PER_PAGE, 'id'), props.location.search)
-  );
+  // const [paginationState, setPaginationState] = useState(
+  //   overridePaginationStateWithQueryParams(getSortState(props.location, ITEMS_PER_PAGE, 'id'), props.location.search)
+  // );
 
-  window.console.log(paginationState);
-  window.console.log(props);
-  const {simplePostList, typePostFilters, match, loading, getSuccess} = props;
-  const [sorting, setSorting] = useState(false);
+
+  const {getSuccess} = props;
+  // const [sorting, setSorting] = useState(false);
   useEffect(() =>
   {
     setStatusGetSuccess(getSuccess);
   }, [getSuccess]);
-  window.console.log(simplePostList);
 
-  const getAllEntities = () =>
-  {
-    if (search)
-    {
-      props.getSearchVisibleEntities(
-        search,
-        paginationState.activePage - 1,
-        paginationState.itemsPerPage,
-        `${paginationState.sort},${paginationState.order}`
-      );
-    }
-    // else {
-    //   props.getEntities(paginationState.activePage - 1, paginationState.itemsPerPage, `${paginationState.sort},${paginationState.order}`);
-    // }
-  };
+
+  // const getAllEntities = () =>
+  // {
+  //   if (search)
+  //   {
+  //     props.getSearchVisibleEntities(
+  //       search
+  //     );
+  //   }
+  //   // else {
+  //   //   props.getEntities(paginationState.activePage - 1, paginationState.itemsPerPage, `${paginationState.sort},${paginationState.order}`);
+  //   // }
+  // };
+
   useEffect(() =>
   {
-    window.console.log("sdfdfdsfsd")
 
     const a: FileApi = new FileApi();
 
 
     a.getFileDataByName("3213232312").then(res => window.console.log(res));
 
-    window.console.log("sdfdfdsfsd")
-    props.getTypePostFilters();
+    // props.getTypePostFilters();
   }, []);
+
   const resetAll = () =>
   {
     props.reset();
-    setPaginationState({
-      ...paginationState,
-      activePage: 1,
-    });
     // props.getEntities();
   };
 
@@ -84,29 +76,13 @@ export const VisibleSearch = (props: ISimplePostProps) =>
   }, []);
 
   //sử dụng để đưa giá trị mặc định của sort về ''
-  useEffect(() =>
-  {
-    setPaginationState({
-      ...paginationState,
-      sort: '',
-    });
-  }, []);
-
+  window.console.log(search)
   const startSearching = () =>
   {
     if (search)
     {
       props.reset();
-      setPaginationState({
-        ...paginationState,
-        activePage: 1,
-      });
-      props.getSearchVisibleEntities(
-        search,
-        paginationState.activePage - 1,
-        paginationState.itemsPerPage,
-        `${paginationState.sort},${paginationState.order}`
-      );
+      props.getSearchVisibleEntities(search)
     }
   };
 
@@ -114,10 +90,6 @@ export const VisibleSearch = (props: ISimplePostProps) =>
   {
     props.reset();
     setSearch('');
-    setPaginationState({
-      ...paginationState,
-      activePage: 1,
-    });
     // props.getEntities();
   };
 
@@ -131,19 +103,6 @@ export const VisibleSearch = (props: ISimplePostProps) =>
     }
   }, [props.updateSuccess]);
 
-  useEffect(() =>
-  {
-    getAllEntities();
-  }, [paginationState.activePage]);
-
-  useEffect(() =>
-  {
-    if (sorting)
-    {
-      getAllEntities();
-      setSorting(false);
-    }
-  }, [sorting, search]);
   window.console.log(getSuccess);
   useEffect(() =>
   {

@@ -50,7 +50,7 @@ export const PostDetails = (props: IPostDetailsProps) =>
       ...paginationState,
       activePage: 1,
     });
-    props.getEntities();
+    // props.getEntities();
   };
 
   useEffect(() =>
@@ -112,7 +112,7 @@ export const PostDetails = (props: IPostDetailsProps) =>
       });
     }
   };
-  window.console.log(paginationState)
+
   useEffect(() =>
   {
     if (sorting)

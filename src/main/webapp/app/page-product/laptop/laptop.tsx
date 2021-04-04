@@ -51,12 +51,12 @@ const Laptop = (props: ISimplePostProps) =>
           params: {page: paginationState.activePage - 1, size: paginationState.itemsPerPage, typePost_id: '1051'},
         });
         const {data} = response;
-        window.console.log(response);
+
         setLaptops(data);
       }
       catch (error)
       {
-        window.console.log(error);
+        // window.console.log(error);
       }
     }
 
@@ -95,7 +95,7 @@ const Laptop = (props: ISimplePostProps) =>
         randomNumbers.push(randomNumber)
       }
       else generaterNumber()
-      window.console.log(randomNumbers)
+
     }
   }
   useEffect(() =>
@@ -110,9 +110,6 @@ const Laptop = (props: ISimplePostProps) =>
         randomUrls.push({link: totalLaptops[item].imageUrl, id: index.toString()})
       })
   }, [totalLaptops])
-  window.console.log(randomNumbers)
-  window.console.log(randomUrls)
-  window.console.log(paginationState);
 
   const showRandomUrls = () =>
   {
@@ -142,7 +139,6 @@ const Laptop = (props: ISimplePostProps) =>
     if (slides && slides.length > 0)
     {
       slides[slideIndex].style.display = "block";
-      window.console.log(slides[slideIndex].style.display)
     }
 
   }
@@ -197,8 +193,6 @@ const Laptop = (props: ISimplePostProps) =>
     }
   }, [multiProduct])
 
-  window.console.log('multiProduct', multiProduct)
-  window.console.log('size-window', window.innerWidth)
   return (
     <div>
       <div className="header-banner d-flex justify-content-center">

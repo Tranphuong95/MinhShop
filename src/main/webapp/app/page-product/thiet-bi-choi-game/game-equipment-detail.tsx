@@ -11,7 +11,7 @@ export const GameEquipmentDetail = props =>
   const page_path = props.match.url;
   const Token = Storage.local.get('jhi-authenticationToken') || Storage.session.get('jhi-authenticationToken');
   const authToken = `Bearer ${Token}`;
-  window.console.log(props.match);
+
   useEffect(() =>
   {
     axios({

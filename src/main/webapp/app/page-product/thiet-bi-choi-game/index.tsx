@@ -7,7 +7,7 @@ import GameEquipmentDetail from "app/page-product/thiet-bi-choi-game/game-equipm
 
 function Routes({match})
 {
-  window.console.log(match);
+
   return (
     <div>
       <BreadcrumbsItem glyph="cog" to={match.url}>

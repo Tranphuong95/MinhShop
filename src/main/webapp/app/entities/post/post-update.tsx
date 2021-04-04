@@ -45,7 +45,6 @@ export const PostUpdate = (props: IPostUpdateProps) =>
   const Token = Storage.local.get('jhi-authenticationToken') || Storage.session.get('jhi-authenticationToken');
   const authToken = `Bearer ${Token}`;
 
-  window.console.log(postDetails);
 
   const {content} = postEntity;
 
@@ -103,6 +102,7 @@ export const PostUpdate = (props: IPostUpdateProps) =>
     setPostFilters(newArray);
   };
 
+  window.console.log(postDetails)
 
   // const upload = (file) =>
   // {
@@ -196,7 +196,6 @@ export const PostUpdate = (props: IPostUpdateProps) =>
   // }
 
 
-  window.console.log({postFilters});
   const saveEntity = (event, errors, values) =>
   {
     if (errors.length === 0)

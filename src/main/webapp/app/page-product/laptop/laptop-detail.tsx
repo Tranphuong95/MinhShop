@@ -7,6 +7,7 @@ import {BreadcrumbsItem} from 'react-breadcrumbs-dynamic';
 import {ProductViews} from 'app/page-product/product-history-view/product-view'
 import HistoryView from "app/page-product/product-history-view/history-view";
 import Comment from "app/modules/comment/comment";
+import StarRating from "app/modules/star-rating/star-rating";
 export const LaptopDetail = props =>
 {
   const [laptop, setLaptop] = useState(null);
@@ -15,7 +16,7 @@ export const LaptopDetail = props =>
   const Token = Storage.local.get('jhi-authenticationToken') || Storage.session.get('jhi-authenticationToken');
   const authToken = `Bearer ${Token}`;
   const urlPage=props.location.pathname
-  window.console.log(props.match);
+
   useEffect(() =>
   {
     axios({
@@ -71,7 +72,7 @@ export const LaptopDetail = props =>
     }
   }, [laptop])
   const ec = encodeURIComponent(JSON.stringify(productView));
-  const dc = decodeURIComponent('%5B%22424%22%2C%22307%22%2C%22426%22%5D')
+  const dc = decodeURIComponent('%5B%22424%22%2C%22307%22%2C%22426%22%5D');
   window.console.log(productView)
   window.console.log(ec)
   window.console.log(dc)
@@ -245,6 +246,7 @@ export const LaptopDetail = props =>
         </div>
       </div>
       {/*<div className="product-detail-content">/!*<ProductDetailContent/>*!/</div>*/}
+      <StarRating/>
       <HistoryView/>
       <Comment/>
     </div>

@@ -46,15 +46,12 @@ export const SimplePost = (props: ISimplePostProps) =>
 
   const [search, setSearch] = useState('');
   const [paginationState, setPaginationState] = useState(
-    overridePaginationStateWithQueryParams(getSortState(props.location, ITEMS_PER_PAGE), props.location.search)
+    overridePaginationStateWithQueryParams(getSortState(props.location, ITEMS_PER_PAGE, 'id'), props.location.search)
   );
 
-  window.console.log(paginationState);
-  window.console.log(props.location.search);
   const {simplePostList, typePost, postDetails, match, loading} = props;
   const [sorting, setSorting] = useState(false);
 
-  window.console.log(simplePostList);
 
   const getAllEntities = () =>
   {
@@ -89,7 +86,7 @@ export const SimplePost = (props: ISimplePostProps) =>
       ...paginationState,
       activePage: 1,
     });
-    props.getEntities();
+    // props.getEntities();
   };
 
   useEffect(() =>
@@ -189,8 +186,7 @@ export const SimplePost = (props: ISimplePostProps) =>
 
   const token = Storage.local.get('jhi-authenticationToken') || Storage.session.get('jhi-authenticationToken');
   const authToken = `Bearer ${token}`;
-  window.console.log(typePost);
-  window.console.log(authToken);
+
   const onGetFilterSimplePost = id =>
   {
     // axios({
@@ -206,7 +202,7 @@ export const SimplePost = (props: ISimplePostProps) =>
     props.reset();
     props.getSortTypePostEntities(`typePost.id:${id}`, paginationState.activePage - 1, paginationState.itemsPerPage);
   };
-  window.console.log(postDetails)
+
   const showImages=(id)=>{
     let result=null;
     if(postDetails && postDetails.length>0){

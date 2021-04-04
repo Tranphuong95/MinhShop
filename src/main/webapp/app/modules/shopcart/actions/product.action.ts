@@ -5,7 +5,7 @@ export const fetchProducts = () => async dispatch =>
 {
   // const res = await fetch('api/simple-posts');
   // const data = await res.json();
-  // window.console.log('fetch thanh cong');
+
   // dispatch({
   //   type: FETCH_PRODUCTS,
   //   payload: data,

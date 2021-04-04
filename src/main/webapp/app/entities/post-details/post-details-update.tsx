@@ -95,13 +95,11 @@ export const PostDetailsUpdate = (props: IPostDetailsUpdateProps) =>
         xhr.addEventListener('load', () =>
         {
           const response = JSON.parse(xhr.responseText);
-          window.console.log(response)
           resolve(response);
         });
         xhr.addEventListener('error', () =>
         {
           const error = JSON.parse(xhr.responseText);
-          window.console.log(error)
           reject(error);
         });
       }
@@ -127,7 +125,7 @@ export const PostDetailsUpdate = (props: IPostDetailsUpdateProps) =>
         {
           const response = JSON.parse(xhr.responseText);
           dataImages.push({link: response.link, id: newID()}) // todo add ảnh vào mảng dataImages
-          window.console.log(response)
+
           resolve(response);
         });
         xhr.addEventListener('error', () =>
@@ -169,7 +167,7 @@ export const PostDetailsUpdate = (props: IPostDetailsUpdateProps) =>
           }
         })
       }
-      window.console.log(alreadyExist)
+
       if (!alreadyExist)
       {
         if(link.link.slice(0,10)==="data:image") {
@@ -182,9 +180,9 @@ export const PostDetailsUpdate = (props: IPostDetailsUpdateProps) =>
             if (res.status === 200 && resType.indexOf('image') >= 0)
             {
               const url=`${newID()}.${tail}`
-              onUpload(res.data, url),
+              onUpload(res.data, url)
                 // setAaa(res.data)
-                window.console.log(res.status)
+
             }
             else alert('Link ảnh không đúng. Vui lòng kiểm tra lại')
           })
@@ -195,8 +193,7 @@ export const PostDetailsUpdate = (props: IPostDetailsUpdateProps) =>
           .then(res => {
             const resType = res.headers['content-type']
             const tail=resType.split("/")[1]
-            window.console.log(resType)
-            window.console.log(tail)
+
             if (res.status === 200 && resType.indexOf('image') >= 0)
             {
               const totalUrl = res.config.url.split('https://cors-anywhere.froala.com/');
@@ -222,7 +219,7 @@ export const PostDetailsUpdate = (props: IPostDetailsUpdateProps) =>
     importLinks.push(link);
     setLink({link: '', id: ''})
   }
-  window.console.log(importLinks)
+
 
   const uploadImage = async (event) =>
   {
@@ -253,7 +250,6 @@ export const PostDetailsUpdate = (props: IPostDetailsUpdateProps) =>
 //   setDataImages(dataImages)
 // },[dataImages])
 
-  window.console.log(dataImages)
 
   const onDeleteImage = (id) =>
   {

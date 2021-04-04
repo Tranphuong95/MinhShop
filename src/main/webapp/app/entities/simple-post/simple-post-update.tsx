@@ -26,6 +26,9 @@ export const SimplePostUpdate = (props: ISimplePostUpdateProps) =>
 
   const {simplePostEntity, postDetails, typePosts, typePostFilters, loading, updating} = props;
 
+  window.console.log("postDetail",simplePostEntity.postDetails)
+  window.console.log("typePost",simplePostEntity.typePost)
+  const dfPostDetailId= simplePostEntity.postDetails?simplePostEntity.postDetails.postDetailsId:'';
   const {searchField} = simplePostEntity;
 
   const handleClose = () =>
@@ -62,12 +65,14 @@ export const SimplePostUpdate = (props: ISimplePostUpdateProps) =>
       handleClose();
     }
   }, [props.updateSuccess]);
+  const onShowButton=()=>alert("click button")
 
   const saveEntity = (event, errors, values) =>
   {
     values.createdDate = convertDateTimeToServer(values.createdDate);
     values.modifiedDate = convertDateTimeToServer(values.modifiedDate);
-
+    window.console.log(typePosts)
+    window.console.log(values)
     if (errors.length === 0)
     {
       const entity = {
@@ -75,7 +80,7 @@ export const SimplePostUpdate = (props: ISimplePostUpdateProps) =>
         ...values,
         typePostFilters: mapIdList(values.typePostFilters),
         postDetails: postDetails.find(it => it.id.toString() === values.postDetailsId.toString()),
-        typePost: typePosts.find(it => it.id.toString() === values.typePostId.toString()),
+        typePost: typePosts.find(it => it.id.toString() === values.typePost.id.toString()),
       };
 
       if (isNew)
@@ -88,7 +93,14 @@ export const SimplePostUpdate = (props: ISimplePostUpdateProps) =>
       }
     }
   };
-
+  const deFaultValues={
+    postDetail: {
+     id: 1003
+    },
+    typePost: {
+      id: 1051
+    }
+  }
   return (
     <div>
       <Row className="justify-content-center">
@@ -104,6 +116,7 @@ export const SimplePostUpdate = (props: ISimplePostUpdateProps) =>
             <p>Loading...</p>
           ) : (
             <AvForm model={isNew ? {} : simplePostEntity} onSubmit={saveEntity}>
+            {/*<AvForm model={isNew ? {} : deFaultValues} onSubmit={saveEntity}>*/}
               {!isNew ? (
                 <AvGroup>
                   <Label for="simple-post-id">
@@ -336,6 +349,7 @@ export const SimplePostUpdate = (props: ISimplePostUpdateProps) =>
                   <Translate contentKey="minhShopApp.simplePost.help.comment"/>
                 </UncontrolledTooltip>
               </AvGroup>
+
               <AvGroup>
                 <Label for="simple-post-postDetails">
                   <Translate contentKey="minhShopApp.simplePost.postDetails">Post Details</Translate>
@@ -345,7 +359,7 @@ export const SimplePostUpdate = (props: ISimplePostUpdateProps) =>
                   data-cy="postDetails"
                   type="select"
                   className="form-control"
-                  name="postDetailsId"
+                  name="postDetails.id"
                   required
                 >
                   <option value="" key="0"/>
@@ -361,6 +375,7 @@ export const SimplePostUpdate = (props: ISimplePostUpdateProps) =>
                   <Translate contentKey="entity.validation.required">This field is required.</Translate>
                 </AvFeedback>
               </AvGroup>
+
               <AvGroup>
                 <Label for="simple-post-typePost">
                   <Translate contentKey="minhShopApp.simplePost.typePost">Type Post</Translate>
@@ -376,6 +391,7 @@ export const SimplePostUpdate = (props: ISimplePostUpdateProps) =>
                     : null}
                 </AvInput>
               </AvGroup>
+
               <AvGroup>
                 <Label for="simple-post-typePostFilter">
                   <Translate contentKey="minhShopApp.simplePost.typePostFilter">Type Post Filter</Translate>
@@ -407,7 +423,7 @@ export const SimplePostUpdate = (props: ISimplePostUpdateProps) =>
                 </span>
               </Button>
               &nbsp;
-              <Button color="primary" id="save-entity" data-cy="entityCreateSaveButton" type="submit" disabled={updating}>
+              <Button color="primary" id="save-entity" data-cy="entityCreateSaveButton" type="submit" disabled={updating} onClick={onShowButton}>
                 <FontAwesomeIcon icon="save"/>
                 &nbsp;
                 <Translate contentKey="entity.action.save">Save</Translate>
